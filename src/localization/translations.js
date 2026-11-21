@@ -1,0 +1,173 @@
+export const translations = {
+  en: {
+    appName: "JobReels",
+    tagline: "Short Video Job Discovery • Instant Apply • 100% Free",
+    roleCandidate: "Job Seeker",
+    roleEmployer: "Hiring Manager / HR",
+    roleAdmin: "Admin Console",
+    
+    // Bottom Nav
+    navReels: "Reels",
+    navJobs: "Jobs",
+    navPost: "+ Post",
+    navChat: "Chat",
+    navProfile: "Profile",
+
+    // Reels Feed
+    applyNow: "APPLY NOW",
+    applied: "Applied ✓",
+    save: "Save",
+    share: "Share",
+    comment: "Comments",
+    report: "Report",
+    soundOn: "Sound On",
+    soundOff: "Mute",
+    verifiedCompany: "Verified Employer",
+    vacancies: "Openings",
+    monthlySalary: "per month",
+
+    // Search Jobs
+    searchPlaceholder: "Search jobs by role, company, skills, or city...",
+    filterAll: "All Jobs",
+    filterNearby: "Nearby / Local",
+    filterFullTime: "Full Time",
+    filterSalary: "High Salary",
+    filterFresher: "Freshers Welcome",
+    workHours: "Working Hours",
+    qualification: "Education / Qualifications",
+    experienceReq: "Experience Required",
+
+    // Digital Resume
+    digitalResumeTitle: "Verified Digital Resume",
+    downloadPDF: "Download Resume",
+    shareWhatsApp: "Share on WhatsApp",
+    viewResume: "View Digital Resume",
+    skills: "Core Skills",
+    education: "Education & Certifications",
+    experience: "Work Experience",
+
+    // Chat & Interview
+    interviewInvite: "Interview Scheduled!",
+    openMaps: "Open Location in Google Maps",
+    quickRepliesTitle: "Quick Messages:",
+    quickReply1: "Hello, I am interested in this position.",
+    quickReply2: "I have confirmed the scheduled interview time.",
+    quickReply3: "Please check my video reel and resume.",
+
+    // Fraud Protection
+    fraudWarning: "100% Free: Never pay any money or deposit for jobs!",
+    reportFakeJob: "Report Suspicious Job / Scam",
+    reportReasonMoney: "Demanding Money / Registration Fee",
+    reportReasonFakeCompany: "Fake Company / Fraud Details"
+  },
+  hi: {
+    appName: "JobReels",
+    tagline: "शॉर्ट वीडियो जॉब डिस्कवरी • तुरंत अप्लाई करें • 100% मुफ़्त",
+    roleCandidate: "जॉब सीकर",
+    roleEmployer: "एचआर / कंपनी",
+    roleAdmin: "एडमिन कंसोल",
+    
+    navReels: "रील्स",
+    navJobs: "जॉब्स",
+    navPost: "+ पोस्ट",
+    navChat: "चैट",
+    navProfile: "प्रोफाइल",
+
+    applyNow: "अप्लाई करें",
+    applied: "अप्लाई हो गया ✓",
+    save: "सेव करें",
+    share: "शेयर",
+    comment: "सवाल-जवाब",
+    report: "रिपोर्ट",
+    soundOn: "आवाज़ ऑन",
+    soundOff: "म्यूट",
+    verifiedCompany: "सत्यापित कंपनी",
+    vacancies: "खाली पद",
+    monthlySalary: "प्रति माह",
+
+    searchPlaceholder: "पद, कंपनी, कौशल या शहर खोजें...",
+    filterAll: "सभी नौकरियां",
+    filterNearby: "नजदीकी नौकरियां",
+    filterFullTime: "फुल टाइम",
+    filterSalary: "बेहतर वेतन",
+    filterFresher: "फ्रेशर्स का स्वागत",
+    workHours: "काम के घंटे",
+    qualification: "शैक्षणिक योग्यता",
+    experienceReq: "अनुभव",
+
+    digitalResumeTitle: "सत्यापित डिजिटल बायोडाटा",
+    downloadPDF: "पीडीएफ डाउनलोड करें",
+    shareWhatsApp: "व्हाट्सएप पर भेजें",
+    viewResume: "बायोडाटा देखें",
+    skills: "कौशल",
+    education: "शिक्षा",
+    experience: "कार्य अनुभव",
+
+    interviewInvite: "इंटरव्यू तय हुआ!",
+    openMaps: "गूगल मैप्स पर लोकेशन देखें",
+    quickRepliesTitle: "त्वरित संदेश:",
+    quickReply1: "नमस्ते, मैं इस पद के लिए इंटरव्यू में आने को तैयार हूं।",
+    quickReply2: "कृपया ऑफिस का पूरा पता शेयर करें।",
+    quickReply3: "मेरा स्किल रील और बायोडाटा प्रोफाइल में उपलब्ध है।",
+
+    fraudWarning: "100% मुफ़्त: नौकरी के लिए किसी को एक भी रुपया न दें!",
+    reportFakeJob: "फर्जी नौकरी / धोखाधड़ी की रिपोर्ट करें",
+    reportReasonMoney: "रुपये / फीस मांग रहे हैं",
+    reportReasonFakeCompany: "फर्जी कंपनी या गलत जानकारी"
+  },
+  mr: {
+    appName: "JobReels",
+    tagline: "शॉर्ट व्हिडीओ जॉब प्लॅटफॉर्म • त्वरित अर्ज • 100% मोफत",
+    roleCandidate: "उमेदवार",
+    roleEmployer: "कंपनी एचआर",
+    roleAdmin: "अ‍ॅडमिन",
+    
+    navReels: "रील्स",
+    navJobs: "नोकऱ्या",
+    navPost: "+ पोस्ट",
+    navChat: "चॅट",
+    navProfile: "माझे प्रोफाइल",
+
+    applyNow: "अर्ज करा",
+    applied: "अर्ज सादर केला ✓",
+    save: "जतन करा",
+    share: "शेअर",
+    comment: "कमेंट",
+    report: "तक्रार",
+    soundOn: "आवाज सुरू",
+    soundOff: "म्यूट",
+    verifiedCompany: "व्हेरीफाईड कंपनी",
+    vacancies: "जागा",
+    monthlySalary: "दरमहा",
+
+    searchPlaceholder: "नोकरी, कौशल्ये किंवा कंपनी शोधा...",
+    filterAll: "सर्व नोकऱ्या",
+    filterNearby: "जवळपासच्या नोकऱ्या",
+    filterFullTime: "फुल टाइम",
+    filterSalary: "चांगला पगार",
+    filterFresher: "फ्रेशर्ससाठी संधी",
+    workHours: "कामाची वेळ",
+    qualification: "शिक्षण व पदवी",
+    experienceReq: "अनुभव",
+
+    digitalResumeTitle: "डिजिटल रेझ्युमे",
+    downloadPDF: "पीडीएफ डाऊनलोड",
+    shareWhatsApp: "व्हॉट्सअ‍ॅपवर शेअर करा",
+    viewResume: "रेझ्युमे पहा",
+    skills: "कौशल्ये",
+    education: "शिक्षण",
+    experience: "अनुभव",
+
+    interviewInvite: "मुलाखत निश्चित झाली!",
+    openMaps: "गुगल मॅप्सवर पत्ता पहा",
+    quickRepliesTitle: "जलद संदेश:",
+    quickReply1: "नमस्कार, मी मुलाखतीसाठी उपस्थित राहीन.",
+    quickReply2: "कृपया ऑफिसचा पत्ता पाठवा.",
+    quickReply3: "माझा व्हिडीओ रील आणि रेझ्युमे प्रोफाईलवर उपलब्ध आहे.",
+
+    fraudWarning: "100% मोफत: नोकरीसाठी कोणालाही पैसे देऊ नका!",
+    reportFakeJob: "बनावट नोकरीची तक्रार करा",
+    reportReasonMoney: "पैसे किंवा फी मागत आहेत",
+    reportReasonFakeCompany: "बनावट कंपनी माहिती"
+  }
+};
