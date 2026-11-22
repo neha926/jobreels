@@ -59,10 +59,10 @@ export const RoleSelect = ({ onRoleSelect, phone }) => {
               <button
                 key={r.id}
                 onClick={() => onRoleSelect(r.id)}
-                className="group w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex items-center gap-3.5 hover:bg-white/10 hover:border-purple-500/60 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 cursor-pointer text-left shadow-lg"
+                className="group w-full card-3d rounded-2xl p-4 flex items-center gap-3.5 hover:border-purple-500/60 hover:-translate-y-0.5 active:translate-y-1 transition-all duration-150 cursor-pointer text-left"
               >
                 <div
-                  className={`w-12 h-12 bg-gradient-to-br ${r.color} rounded-xl flex items-center justify-center shadow-md transform group-hover:rotate-3 transition-transform shrink-0`}
+                  className={`w-12 h-12 bg-gradient-to-br ${r.color} rounded-xl flex items-center justify-center badge-3d border-t border-white/35 transform group-hover:rotate-3 transition-transform shrink-0`}
                 >
                   <Icon size={22} className="text-white" />
                 </div>
@@ -71,7 +71,7 @@ export const RoleSelect = ({ onRoleSelect, phone }) => {
                     <h3 className="text-white font-medium text-sm truncate">
                       {r.title}
                     </h3>
-                    <span className="text-[10px] uppercase font-medium text-zinc-400 bg-white/5 px-2 py-0.5 rounded-md shrink-0">
+                    <span className="text-[10px] uppercase font-medium text-zinc-300 bg-black/40 border border-white/10 px-2 py-0.5 rounded-md shrink-0 shadow-inner">
                       {r.badge}
                     </span>
                   </div>

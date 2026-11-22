@@ -90,14 +90,14 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 shadow-2xl max-h-[82vh] overflow-y-auto no-scrollbar">
+        <div className="card-3d rounded-[2rem] p-6 shadow-2xl max-h-[82vh] overflow-y-auto no-scrollbar">
           {role === 'employer' ? (
             <form onSubmit={handleSaveEmployer} className="space-y-4">
               <div>
                 <label className="text-xs font-medium text-zinc-300 block mb-1">
                   Company / Organization Name
                 </label>
-                <div className="flex items-center bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-purple-500/70 transition">
+                <div className="input-3d rounded-xl px-3 py-2.5 flex items-center">
                   <Building2 className="w-4 h-4 text-purple-400 mr-2 shrink-0" />
                   <input
                     type="text"
@@ -114,7 +114,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                 <label className="text-xs font-medium text-zinc-300 block mb-1">
                   HR / Recruiter Name
                 </label>
-                <div className="flex items-center bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-purple-500/70 transition">
+                <div className="input-3d rounded-xl px-3 py-2.5 flex items-center">
                   <User className="w-4 h-4 text-purple-400 mr-2 shrink-0" />
                   <input
                     type="text"
@@ -130,7 +130,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                 <label className="text-xs font-medium text-zinc-300 block mb-1">
                   Company Location / City
                 </label>
-                <div className="flex items-center bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-purple-500/70 transition">
+                <div className="input-3d rounded-xl px-3 py-2.5 flex items-center">
                   <MapPin className="w-4 h-4 text-purple-400 mr-2 shrink-0" />
                   <input
                     type="text"
@@ -148,7 +148,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                 <select
                   value={companyType}
                   onChange={(e) => setCompanyType(e.target.value)}
-                  className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white font-normal outline-none"
+                  className="w-full input-3d rounded-xl px-3 py-2.5 text-sm text-white font-normal outline-none"
                 >
                   <option value="Technology & Digital Services" className="bg-gray-900">Technology & Digital Services</option>
                   <option value="Manufacturing & Industrial" className="bg-gray-900">Manufacturing & Industrial</option>
@@ -168,7 +168,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-medium text-xs shadow-lg shadow-purple-900/30 transition cursor-pointer flex items-center justify-center gap-1.5"
+                  className="btn-3d flex-1 py-2.5 rounded-xl text-white font-medium text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <span>Save & Continue</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -181,7 +181,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                 <label className="text-xs font-medium text-zinc-300 block mb-1">
                   Full Name (पूर्ण नाव)
                 </label>
-                <div className="flex items-center bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-purple-500/70 transition">
+                <div className="input-3d rounded-xl px-3 py-2.5 flex items-center">
                   <User className="w-4 h-4 text-purple-400 mr-2 shrink-0" />
                   <input
                     type="text"
@@ -201,7 +201,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                 <select
                   value={workCategory}
                   onChange={(e) => setWorkCategory(e.target.value)}
-                  className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white font-normal outline-none"
+                  className="w-full input-3d rounded-xl px-3 py-2.5 text-sm text-white font-normal outline-none"
                 >
                   <option value="Tech & Software" className="bg-gray-900">Tech & Software Development</option>
                   <option value="Civil Engineering & Survey" className="bg-gray-900">Civil Engineering & Site Survey</option>
@@ -221,7 +221,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                   <select
                     value={education}
                     onChange={(e) => setEducation(e.target.value)}
-                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white font-normal outline-none"
+                    className="w-full input-3d rounded-xl px-3 py-2.5 text-xs text-white font-normal outline-none"
                   >
                     <option value="Below 10th" className="bg-gray-900">Below 10th</option>
                     <option value="10th Pass" className="bg-gray-900">10th Pass</option>
@@ -240,7 +240,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                   <select
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
-                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white font-normal outline-none"
+                    className="w-full input-3d rounded-xl px-3 py-2.5 text-xs text-white font-normal outline-none"
                   >
                     <option value="Fresher" className="bg-gray-900">Fresher</option>
                     <option value="0-1 Year" className="bg-gray-900">0-1 Year</option>
@@ -260,7 +260,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-normal outline-none"
+                    className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white font-normal outline-none"
                   />
                 </div>
 
@@ -272,7 +272,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                     type="text"
                     value={expectedSalary}
                     onChange={(e) => setExpectedSalary(e.target.value)}
-                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-normal outline-none"
+                    className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white font-normal outline-none"
                   />
                 </div>
               </div>
@@ -288,7 +288,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-medium text-xs shadow-lg shadow-purple-900/30 transition cursor-pointer flex items-center justify-center gap-1.5"
+                  className="btn-3d flex-1 py-2.5 rounded-xl text-white font-medium text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <span>Save & Continue</span>
                   <ArrowRight className="w-3.5 h-3.5" />
