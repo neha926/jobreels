@@ -50,8 +50,11 @@ export const App = () => {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.isLoggedIn && parsed.phone) {
+          const cleanPhone = parsed.phone.replace(/\D/g, "");
+          const lockedRole = localStorage.getItem(`jobreels_role_${cleanPhone}`) || parsed.role || "candidate";
           setIsLoggedIn(true);
-          setCurrentRole(parsed.role || "candidate");
+          setAuthPhone(cleanPhone);
+          setCurrentRole(lockedRole);
           setUserProfile(parsed.profile || initialCandidateProfile);
           return;
         }
@@ -116,47 +119,57 @@ export const App = () => {
     showToast(`✓ Welcome ${profileData.name || profileData.companyName}! Logged in as ${profileData.phone}`);
   };
 
-  const finishAuth = (role, customProfile) => {
+  const finishAuth = (role, customProfile, explicitPhone) => {
+    const activePhone = explicitPhone || authPhone;
+    const cleanPhone = (activePhone || "").replace(/\D/g, "");
+    const lockedRole = localStorage.getItem(`jobreels_role_${cleanPhone}`) || role;
+    if (cleanPhone) {
+      localStorage.setItem(`jobreels_role_${cleanPhone}`, lockedRole);
+    }
+
     let finalProfile = customProfile;
     if (!finalProfile) {
-      if (role === "employer") {
+      if (lockedRole === "employer") {
         finalProfile = {
           companyName: "TechNova Solutions Ltd.",
           companyType: "Technology & Digital Services",
           location: "Hinjewadi Phase 1, Pune",
           hrName: "HR Team",
-          hrPhone: `+91 ${authPhone}`,
+          hrPhone: `+91 ${cleanPhone}`,
           gstin: "CIN: U72200PN2021PTC19841",
           verified: true
         };
       } else {
         finalProfile = {
           ...initialCandidateProfile,
-          phone: `+91 ${authPhone}`,
+          phone: `+91 ${cleanPhone}`,
           name: "Verified Candidate"
         };
       }
     }
 
     setIsLoggedIn(true);
-    setCurrentRole(role);
+    setCurrentRole(lockedRole);
     setUserProfile(finalProfile);
 
-    localStorage.setItem(
-      "jobreels_user_session",
-      JSON.stringify({
-        isLoggedIn: true,
-        phone: authPhone,
-        role: role,
-        profile: finalProfile
-      })
-    );
+    if (cleanPhone) {
+      localStorage.setItem(`jobreels_profile_${cleanPhone}`, JSON.stringify(finalProfile));
+      localStorage.setItem(
+        "jobreels_user_session",
+        JSON.stringify({
+          isLoggedIn: true,
+          phone: cleanPhone,
+          role: lockedRole,
+          profile: finalProfile
+        })
+      );
+    }
 
-    showToast(`✓ Welcome! Logged in as +91 ${authPhone} (${role.toUpperCase()})`);
+    showToast(`✓ Welcome! Logged in as +91 ${cleanPhone} (${lockedRole === 'candidate' ? 'Job Seeker' : lockedRole === 'employer' ? 'Company HR' : 'Admin'})`);
 
-    if (role === "employer") {
+    if (lockedRole === "employer") {
       navigate("/employer");
-    } else if (role === "admin") {
+    } else if (lockedRole === "admin") {
       navigate("/admin");
     } else {
       navigate("/");
@@ -366,8 +379,22 @@ export const App = () => {
       return (
         <PhoneLogin
           onPhoneVerified={(phone) => {
-            setAuthPhone(phone);
-            setAuthStep("role");
+            const cleanPhone = (phone || "").replace(/\D/g, "");
+            setAuthPhone(cleanPhone);
+            const lockedRole = localStorage.getItem(`jobreels_role_${cleanPhone}`);
+            if (lockedRole) {
+              setSelectedRole(lockedRole);
+              const savedProfileStr = localStorage.getItem(`jobreels_profile_${cleanPhone}`);
+              let savedProfile = null;
+              if (savedProfileStr) {
+                try {
+                  savedProfile = JSON.parse(savedProfileStr);
+                } catch (e) {}
+              }
+              finishAuth(lockedRole, savedProfile, cleanPhone);
+            } else {
+              setAuthStep("role");
+            }
           }}
           language={language}
           t={t}
@@ -380,14 +407,19 @@ export const App = () => {
         <RoleSelect
           phone={authPhone}
           onRoleSelect={(role) => {
+            localStorage.setItem(`jobreels_role_${authPhone}`, role);
             setSelectedRole(role);
             if (role === "admin") {
-              finishAuth("admin", {
-                name: "System Admin",
-                phone: `+91 ${authPhone}`,
-                role: "admin",
-                verified: true
-              });
+              finishAuth(
+                "admin",
+                {
+                  name: "System Admin",
+                  phone: `+91 ${authPhone}`,
+                  role: "admin",
+                  verified: true
+                },
+                authPhone
+              );
             } else {
               setAuthStep("profile");
             }
@@ -401,8 +433,8 @@ export const App = () => {
         <ProfileSetup
           role={selectedRole}
           phone={authPhone}
-          onComplete={(profile) => finishAuth(selectedRole, profile)}
-          onSkip={() => finishAuth(selectedRole, null)}
+          onComplete={(profile) => finishAuth(selectedRole, profile, authPhone)}
+          onSkip={() => finishAuth(selectedRole, null, authPhone)}
         />
       );
     }
@@ -422,7 +454,6 @@ export const App = () => {
         {/* App Header with Notification Bell, Language, and Multi-User Login */}
         <Header
           currentRole={currentRole}
-          setCurrentRole={handleRoleChange}
           language={language}
           setLanguage={setLanguage}
           isLoggedIn={isLoggedIn}
@@ -474,6 +505,8 @@ export const App = () => {
                 <ChatView
                   messages={chatMessages}
                   onSendMessage={handleSendMessage}
+                  currentRole={currentRole}
+                  userProfile={userProfile}
                   t={t}
                 />
               }

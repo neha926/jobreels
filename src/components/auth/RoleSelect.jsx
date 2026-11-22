@@ -17,9 +17,9 @@ export const RoleSelect = ({ onRoleSelect, phone }) => {
       icon: Building2,
       title: "I'm an Employer / HR",
       subtitle: 'Company / Recruiter',
-      desc: 'Post job vacancies in 2 mins, publish video ads, review applicants & schedule interviews.',
+      desc: 'Post vacancies, review job seeker applications, and manage candidate chats.',
       color: 'from-pink-500 to-rose-500',
-      badge: 'Hiring Team',
+      badge: 'Company HR',
     },
     {
       id: 'admin',
@@ -34,63 +34,63 @@ export const RoleSelect = ({ onRoleSelect, phone }) => {
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4 relative overflow-hidden selection:bg-purple-600 selection:text-white">
-      {/* Background Decorations (Matching Taskboard) */}
+      {/* Background Decorations */}
       <div className="absolute top-[-20%] right-[-10%] w-[55%] h-[55%] bg-purple-600/15 blur-[140px] rounded-full pointer-events-none"></div>
       <div className="absolute bottom-[-20%] left-[-10%] w-[55%] h-[55%] bg-pink-600/15 blur-[140px] rounded-full pointer-events-none"></div>
 
       <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-7">
-          <div className="inline-flex items-center gap-2 bg-purple-950/70 border border-purple-500/30 px-3.5 py-1.5 rounded-full text-purple-300 text-xs font-bold mb-3">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center gap-2 bg-purple-950/70 border border-purple-500/30 px-3 py-1 rounded-full text-purple-300 text-xs font-medium mb-3">
             <span>Verified Phone:</span>
             <span className="text-white">+91 {phone}</span>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight mb-2">
-            Who are you?
+          <h1 className="text-2xl font-semibold text-white tracking-tight mb-1.5">
+            Select Your Role
           </h1>
-          <p className="text-gray-400 text-xs font-medium">
-            Choose your primary role to configure your JobReels workspace
+          <p className="text-zinc-400 text-xs font-normal">
+            Choose your permanent account role to configure your workspace
           </p>
         </div>
 
-        <div className="space-y-3.5">
+        <div className="space-y-3">
           {roles.map((r) => {
             const Icon = r.icon;
             return (
               <button
                 key={r.id}
                 onClick={() => onRoleSelect(r.id)}
-                className="group w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-[1.8rem] p-5 flex items-center gap-4 hover:bg-white/10 hover:border-purple-500/60 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 cursor-pointer text-left shadow-lg"
+                className="group w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex items-center gap-3.5 hover:bg-white/10 hover:border-purple-500/60 hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 cursor-pointer text-left shadow-lg"
               >
                 <div
-                  className={`w-14 h-14 bg-gradient-to-br ${r.color} rounded-2xl flex items-center justify-center shadow-lg transform group-hover:rotate-6 transition-transform shrink-0`}
+                  className={`w-12 h-12 bg-gradient-to-br ${r.color} rounded-xl flex items-center justify-center shadow-md transform group-hover:rotate-3 transition-transform shrink-0`}
                 >
-                  <Icon size={26} className="text-white" />
+                  <Icon size={22} className="text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <h3 className="text-white font-extrabold text-base truncate">
+                    <h3 className="text-white font-medium text-sm truncate">
                       {r.title}
                     </h3>
-                    <span className="text-[10px] uppercase font-bold text-gray-400 bg-white/5 px-2 py-0.5 rounded-md shrink-0">
+                    <span className="text-[10px] uppercase font-medium text-zinc-400 bg-white/5 px-2 py-0.5 rounded-md shrink-0">
                       {r.badge}
                     </span>
                   </div>
-                  <p className="text-gray-400 text-xs font-normal leading-relaxed line-clamp-2">
+                  <p className="text-zinc-400 text-xs font-normal leading-relaxed line-clamp-2">
                     {r.desc}
                   </p>
                 </div>
                 <ArrowRight
-                  size={18}
-                  className="text-gray-500 group-hover:text-purple-300 group-hover:translate-x-1 transition-all shrink-0"
+                  size={16}
+                  className="text-zinc-500 group-hover:text-purple-300 group-hover:translate-x-1 transition-all shrink-0"
                 />
               </button>
             );
           })}
         </div>
 
-        <div className="mt-8 text-center">
-          <p className="text-gray-500 text-xs">
-            You can also switch workspace mode anytime from the header menu.
+        <div className="mt-6 text-center">
+          <p className="text-zinc-500 text-xs font-normal">
+            Note: Once selected, this role is permanently locked to your mobile number.
           </p>
         </div>
       </div>

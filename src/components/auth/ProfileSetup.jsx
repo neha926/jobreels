@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Building2, MapPin, GraduationCap, Briefcase, IndianRupee, ArrowRight, Sparkles } from 'lucide-react';
+import { User, Building2, MapPin, ArrowRight } from 'lucide-react';
 
 export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
   // Candidate Fields (PRD Section 4)
@@ -63,18 +63,18 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
 
       <div className="w-full max-w-lg relative z-10">
         {/* Header with Skip Button */}
-        <div className="flex items-center justify-between mb-5 px-1">
+        <div className="flex items-center justify-between mb-4 px-1">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs uppercase font-extrabold tracking-wider text-purple-400">
+            <div className="flex items-center gap-2 mb-0.5">
+              <span className="text-xs uppercase font-medium tracking-wider text-purple-400">
                 Step 3 of 3
               </span>
-              <span className="text-gray-500">•</span>
-              <span className="text-xs font-semibold text-gray-400">
+              <span className="text-zinc-500">•</span>
+              <span className="text-xs font-normal text-zinc-400">
                 +91 {phone}
               </span>
             </div>
-            <h2 className="text-2xl font-black text-white">
+            <h2 className="text-xl font-semibold text-white">
               {role === 'employer' ? 'Company Details' : 'Complete Your Profile'}
             </h2>
           </div>
@@ -83,7 +83,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
           <button
             type="button"
             onClick={onSkip}
-            className="px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white text-xs font-bold transition-all cursor-pointer"
+            className="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white text-xs font-medium transition-all cursor-pointer"
           >
             Skip for now &rarr;
           </button>
@@ -94,7 +94,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
           {role === 'employer' ? (
             <form onSubmit={handleSaveEmployer} className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-gray-300 block mb-1">
+                <label className="text-xs font-medium text-zinc-300 block mb-1">
                   Company / Organization Name
                 </label>
                 <div className="flex items-center bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-purple-500/70 transition">
@@ -105,13 +105,13 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                     placeholder="e.g. Swaraj Tech Enterprises"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
-                    className="w-full bg-transparent text-sm text-white font-semibold outline-none placeholder-gray-500"
+                    className="w-full bg-transparent text-sm text-white font-normal outline-none placeholder-zinc-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-gray-300 block mb-1">
+                <label className="text-xs font-medium text-zinc-300 block mb-1">
                   HR / Recruiter Name
                 </label>
                 <div className="flex items-center bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-purple-500/70 transition">
@@ -121,13 +121,13 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                     placeholder="e.g. Rajesh Patil"
                     value={hrName}
                     onChange={(e) => setHrName(e.target.value)}
-                    className="w-full bg-transparent text-sm text-white font-semibold outline-none placeholder-gray-500"
+                    className="w-full bg-transparent text-sm text-white font-normal outline-none placeholder-zinc-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-gray-300 block mb-1">
+                <label className="text-xs font-medium text-zinc-300 block mb-1">
                   Company Location / City
                 </label>
                 <div className="flex items-center bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-purple-500/70 transition">
@@ -136,19 +136,19 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                     type="text"
                     value={companyLocation}
                     onChange={(e) => setCompanyLocation(e.target.value)}
-                    className="w-full bg-transparent text-sm text-white font-semibold outline-none"
+                    className="w-full bg-transparent text-sm text-white font-normal outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-gray-300 block mb-1">
+                <label className="text-xs font-medium text-zinc-300 block mb-1">
                   Business / Industry Category
                 </label>
                 <select
                   value={companyType}
                   onChange={(e) => setCompanyType(e.target.value)}
-                  className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white font-semibold outline-none"
+                  className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white font-normal outline-none"
                 >
                   <option value="Technology & Digital Services" className="bg-gray-900">Technology & Digital Services</option>
                   <option value="Manufacturing & Industrial" className="bg-gray-900">Manufacturing & Industrial</option>
@@ -158,17 +158,17 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                 </select>
               </div>
 
-              <div className="flex gap-3 pt-3">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={onSkip}
-                  className="flex-1 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white font-bold text-xs transition cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white font-medium text-xs transition cursor-pointer"
                 >
                   Skip for now
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold text-xs shadow-lg shadow-purple-900/30 transition cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-medium text-xs shadow-lg shadow-purple-900/30 transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <span>Save & Continue</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -178,7 +178,7 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
           ) : (
             <form onSubmit={handleSaveCandidate} className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-gray-300 block mb-1">
+                <label className="text-xs font-medium text-zinc-300 block mb-1">
                   Full Name (पूर्ण नाव)
                 </label>
                 <div className="flex items-center bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 focus-within:border-purple-500/70 transition">
@@ -189,19 +189,19 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                     placeholder="e.g. Ganesh Tukaram Shinde"
                     value={candidateName}
                     onChange={(e) => setCandidateName(e.target.value)}
-                    className="w-full bg-transparent text-sm text-white font-semibold outline-none placeholder-gray-500"
+                    className="w-full bg-transparent text-sm text-white font-normal outline-none placeholder-zinc-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-bold text-gray-300 block mb-1">
-                  Primary Skill / Work Category (PRD Section 4)
+                <label className="text-xs font-medium text-zinc-300 block mb-1">
+                  Primary Skill / Work Category
                 </label>
                 <select
                   value={workCategory}
                   onChange={(e) => setWorkCategory(e.target.value)}
-                  className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white font-semibold outline-none"
+                  className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white font-normal outline-none"
                 >
                   <option value="Tech & Software" className="bg-gray-900">Tech & Software Development</option>
                   <option value="Civil Engineering & Survey" className="bg-gray-900">Civil Engineering & Site Survey</option>
@@ -215,13 +215,13 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-gray-300 block mb-1">
+                  <label className="text-xs font-medium text-zinc-300 block mb-1">
                     Education
                   </label>
                   <select
                     value={education}
                     onChange={(e) => setEducation(e.target.value)}
-                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white font-semibold outline-none"
+                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white font-normal outline-none"
                   >
                     <option value="Below 10th" className="bg-gray-900">Below 10th</option>
                     <option value="10th Pass" className="bg-gray-900">10th Pass</option>
@@ -234,13 +234,13 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-gray-300 block mb-1">
+                  <label className="text-xs font-medium text-zinc-300 block mb-1">
                     Experience
                   </label>
                   <select
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
-                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white font-semibold outline-none"
+                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white font-normal outline-none"
                   >
                     <option value="Fresher" className="bg-gray-900">Fresher</option>
                     <option value="0-1 Year" className="bg-gray-900">0-1 Year</option>
@@ -253,42 +253,42 @@ export const ProfileSetup = ({ role, phone, onComplete, onSkip }) => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-gray-300 block mb-1">
+                  <label className="text-xs font-medium text-zinc-300 block mb-1">
                     Current Location
                   </label>
                   <input
                     type="text"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-semibold outline-none"
+                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-normal outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-gray-300 block mb-1">
+                  <label className="text-xs font-medium text-zinc-300 block mb-1">
                     Expected Salary
                   </label>
                   <input
                     type="text"
                     value={expectedSalary}
                     onChange={(e) => setExpectedSalary(e.target.value)}
-                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-semibold outline-none"
+                    className="w-full bg-gray-900/60 border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-normal outline-none"
                   />
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-3">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={onSkip}
-                  className="flex-1 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white font-bold text-xs transition cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300 hover:text-white font-medium text-xs transition cursor-pointer"
                 >
                   Skip for now
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold text-xs shadow-lg shadow-purple-900/30 transition cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-medium text-xs shadow-lg shadow-purple-900/30 transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <span>Save & Continue</span>
                   <ArrowRight className="w-3.5 h-3.5" />
