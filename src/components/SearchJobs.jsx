@@ -97,7 +97,7 @@ export const SearchJobs = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t?.searchPlaceholder || "Search jobs, roles, skills, or city..."}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-10 pr-8 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/40 shadow-sm transition"
+            className="w-full input-3d rounded-xl pl-10 pr-8 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none transition font-normal"
           />
           {searchQuery && (
             <button

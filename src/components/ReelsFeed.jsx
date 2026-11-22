@@ -18,6 +18,7 @@ export const ReelsFeed = ({
   const [likedReels, setLikedReels] = useState({});
   const [savedReels, setSavedReels] = useState({});
   const [showComments, setShowComments] = useState(false);
+  const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
   const [progress, setProgress] = useState(0);
   const [swipeHint, setSwipeHint] = useState(true);
   const [commentsList, setCommentsList] = useState([
@@ -40,6 +41,7 @@ export const ReelsFeed = ({
 
   // Play active video on reel index change
   useEffect(() => {
+    setIsCaptionExpanded(false);
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play().then(() => {
@@ -345,21 +347,51 @@ export const ReelsFeed = ({
           </div>
         </div>
 
-        {/* Caption & Normal Reel Hashtags (Inline, No Special Box) */}
-        <p className="text-xs text-zinc-100 font-normal line-clamp-3 mb-2.5 leading-relaxed drop-shadow">
-          <span>{activeReel.caption} </span>
-          {activeReel.skills?.map((skill, i) => {
-            const cleanTag = skill.replace(/[\s\.]+/g, '').toLowerCase();
-            return (
-              <span
-                key={i}
-                className="text-purple-300 font-semibold hover:text-purple-200 hover:underline mr-1.5 cursor-pointer"
-              >
-                #{cleanTag}
+        {/* Caption & Project Info: collapsed to title + plain '...' by default, expandable on click */}
+        <div className="text-xs text-zinc-100 font-normal mb-2.5 leading-relaxed drop-shadow">
+          {!isCaptionExpanded ? (
+            <p className="line-clamp-2">
+              <span className="font-medium text-white">
+                {activeReel.title || activeReel.caption?.split(' - ')[0] || activeReel.caption?.slice(0, 45)}
               </span>
-            );
-          })}
-        </p>
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsCaptionExpanded(true);
+                }}
+                className="cursor-pointer text-zinc-300 hover:text-white select-none ml-1 font-semibold"
+                title="Expand"
+              >
+                ...
+              </span>
+            </p>
+          ) : (
+            <p className="max-h-36 overflow-y-auto no-scrollbar">
+              <span>{activeReel.caption} </span>
+              {activeReel.skills?.map((skill, i) => {
+                const cleanTag = skill.replace(/[\s\.]+/g, '').toLowerCase();
+                return (
+                  <span
+                    key={i}
+                    className="text-purple-300 font-semibold hover:text-purple-200 hover:underline mr-1.5 cursor-pointer"
+                  >
+                    #{cleanTag}
+                  </span>
+                );
+              })}
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsCaptionExpanded(false);
+                }}
+                className="cursor-pointer text-zinc-400 hover:text-zinc-200 select-none ml-1 font-semibold"
+                title="Collapse"
+              >
+                ...
+              </span>
+            </p>
+          )}
+        </div>
 
         {/* IN-FEED JOB CARD & ONE-TAP APPLY BUTTON */}
         {activeReel.jobDetails && (

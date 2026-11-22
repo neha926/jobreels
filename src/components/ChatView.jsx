@@ -239,7 +239,7 @@ export const ChatView = ({
 
         {/* Search Bar */}
         <div className="p-3 bg-zinc-950 border-b border-zinc-800/80">
-          <div className="flex items-center bg-zinc-900/80 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-300">
+          <div className="flex items-center input-3d rounded-xl px-3 py-2 text-xs text-zinc-300">
             <Search className="w-3.5 h-3.5 text-zinc-400 mr-2 shrink-0" />
             <input
               type="text"
@@ -510,7 +510,7 @@ export const ChatView = ({
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           placeholder={isEmployer ? `Message ${activeSeeker?.name || 'candidate'}...` : 'Type message to HR...'}
-          className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/40 transition font-normal"
+          className="flex-1 input-3d rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none transition font-normal"
         />
         <button
           type="submit"

@@ -198,7 +198,7 @@ export const EmployerPanel = ({
                     type="date"
                     value={interviewDate}
                     onChange={(e) => setInterviewDate(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                    className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                   />
                 </div>
                 <div>
@@ -207,7 +207,7 @@ export const EmployerPanel = ({
                     type="text"
                     value={interviewTime}
                     onChange={(e) => setInterviewTime(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                    className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                   />
                 </div>
               </div>
@@ -220,7 +220,7 @@ export const EmployerPanel = ({
                   rows="2"
                   value={interviewAddress}
                   onChange={(e) => setInterviewAddress(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                  className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                 />
               </div>
 
@@ -230,7 +230,7 @@ export const EmployerPanel = ({
                   type="text"
                   value={contactPerson}
                   onChange={(e) => setContactPerson(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                  className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                 />
               </div>
 

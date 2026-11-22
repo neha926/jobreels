@@ -577,11 +577,11 @@ export const ProfileView = ({
             </div>
 
             {/* DROPDOWN 1: CORE SKILLS (VIDEO VERIFIED) */}
-            <div className="border border-zinc-800 rounded-xl overflow-hidden mb-2.5 bg-zinc-950/60 shadow-xs">
+            <div className="box-inset-3d overflow-hidden mb-2.5">
               <button
                 type="button"
                 onClick={() => toggleDropdown("skills")}
-                className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
+                className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-xl bg-purple-900/40 text-purple-300 border border-purple-700/50 flex items-center justify-center shrink-0">
@@ -622,11 +622,11 @@ export const ProfileView = ({
             </div>
 
             {/* DROPDOWN 2: EDUCATION & CERTIFICATIONS */}
-            <div className="border border-zinc-800 rounded-xl overflow-hidden mb-2.5 bg-zinc-950/60 shadow-xs">
+            <div className="box-inset-3d overflow-hidden mb-2.5">
               <button
                 type="button"
                 onClick={() => toggleDropdown("education")}
-                className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
+                className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-xl bg-purple-900/40 text-purple-300 border border-purple-700/50 flex items-center justify-center shrink-0">
@@ -648,7 +648,7 @@ export const ProfileView = ({
 
               {openDropdowns.education && (
                 <div className="p-3 pt-1 border-t border-zinc-800/80 bg-zinc-950/40 animate-in fade-in duration-150">
-                  <div className="bg-zinc-950/60 p-3 rounded-xl border border-zinc-800 text-xs mt-1">
+                  <div className="box-inset-3d p-3 text-xs mt-1">
                     <div className="flex items-center justify-between mb-1">
                       <p className="font-bold text-white text-xs">{profile.education}</p>
                       <span className="bg-purple-900/40 text-purple-300 font-semibold text-xs px-2 py-0.5 rounded-md border border-purple-600/40">
@@ -669,11 +669,11 @@ export const ProfileView = ({
             </div>
 
             {/* DROPDOWN 3: PROJECT & WORK EXPERIENCE (ORGANIZATIONS + COLLEGE PROJECTS) */}
-            <div className="border border-zinc-800 rounded-xl overflow-hidden mb-3 bg-zinc-950/60 shadow-xs">
+            <div className="box-inset-3d overflow-hidden mb-3">
               <button
                 type="button"
                 onClick={() => toggleDropdown("experience")}
-                className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
+                className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-xl bg-purple-900/40 text-purple-300 border border-purple-700/50 flex items-center justify-center shrink-0">
@@ -704,8 +704,8 @@ export const ProfileView = ({
                           Organizations (Company Projects)
                         </span>
                       </div>
-                      <span className="text-[10px] font-bold text-purple-300 bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800/40">
-                        {organizationsList.length} Companies
+                      <span className="text-[10px] font-bold text-purple-300 bg-purple-950/80 px-2.5 py-0.5 rounded border border-purple-800/40">
+                        3
                       </span>
                     </div>
 
@@ -719,7 +719,7 @@ export const ProfileView = ({
                         return (
                           <div
                             key={org.id}
-                            className="border border-zinc-800 hover:border-purple-500/40 rounded-xl overflow-hidden bg-zinc-950/70 transition-all shadow-xs"
+                            className="box-inset-3d overflow-hidden transition-all mb-2"
                           >
                             {/* Organization Clickable Header (Dropdown Toggle) */}
                             <button
@@ -767,7 +767,7 @@ export const ProfileView = ({
                                 {org.projects.map((proj, pIdx) => (
                                   <div
                                     key={pIdx}
-                                    className="bg-zinc-900/80 border border-zinc-800 rounded-lg p-2.5 hover:border-purple-500/30 transition"
+                                    className="box-inset-3d p-2.5 transition"
                                   >
                                     <div className="flex items-start justify-between gap-2 mb-1.5">
                                       <div className="min-w-0">
@@ -837,7 +837,7 @@ export const ProfileView = ({
                       {collegeProjects.map((pName, pIdx) => (
                         <div
                           key={pIdx}
-                          className="bg-zinc-950/80 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2.5 hover:border-purple-500/30 transition shadow-xs"
+                          className="box-inset-3d p-2.5 flex items-center gap-2.5 transition"
                         >
                           <span className="w-5 h-5 rounded-md bg-purple-900/40 border border-purple-700/40 text-purple-300 text-[10px] font-bold flex items-center justify-center shrink-0">
                             {pIdx + 1}
@@ -874,7 +874,7 @@ export const ProfileView = ({
           {applications.map((app) => (
             <div
               key={app.id}
-              className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-sm"
+              className="box-inset-3d p-4 shadow-sm"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>

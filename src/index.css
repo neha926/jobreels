@@ -66,15 +66,30 @@
   box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.4);
 }
 
+/* Sleek Prompt-Style Textbox (Designed like Antigravity / Gemini prompt box with preserved purple borders) */
 .input-3d {
-  background: rgba(24, 24, 27, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+  background: rgba(22, 22, 26, 0.95);
+  border: 1px solid rgba(168, 85, 247, 0.45);
+  border-radius: 1rem;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.45);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.input-3d:focus-within {
-  border-color: rgba(168, 85, 247, 0.6);
-  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.15);
+.input-3d:focus-within,
+.input-3d:focus {
+  border-color: rgba(168, 85, 247, 0.85);
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(168, 85, 247, 0.35);
+}
+
+/* 3D Inset Shadow for full-width boxes (without glow, tactile indented depth) */
+.box-inset-3d {
+  background: rgba(18, 18, 22, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.875rem;
+  box-shadow: inset 0 2px 5px 0 rgba(0, 0, 0, 0.55);
+  transition: all 0.15s ease;
+}
+.box-inset-3d:hover {
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .btn-3d {

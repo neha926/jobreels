@@ -181,11 +181,11 @@ export const PhoneLogin = ({ onPhoneVerified, language = 'en', t }) => {
                 <label className="text-xs font-medium text-zinc-300 ml-0.5 block">
                   Mobile Number (मोबाईल नंबर)
                 </label>
-                <div className="input-3d rounded-2xl px-4 py-3 flex items-center">
-                  <span className="text-zinc-300 font-medium mr-2 text-sm shrink-0 whitespace-nowrap select-none">
-                    +91
-                  </span>
-                  <span className="w-px h-4 bg-zinc-700/80 mr-3 shrink-0"></span>
+                <div className="input-3d rounded-2xl px-3.5 py-2.5 flex items-center gap-2.5">
+                  <div className="flex flex-col items-center justify-center shrink-0 pr-2.5 border-r border-zinc-700/60 select-none">
+                    <span className="text-[10px] font-bold text-emerald-400 tracking-wider leading-none">IN</span>
+                    <span className="text-xs font-bold text-emerald-400 leading-none mt-1">+91</span>
+                  </div>
                   <input
                     type="tel"
                     required

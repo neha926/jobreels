@@ -190,7 +190,7 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                 value={jobTitle}
                 onChange={(e) => setJobTitle(e.target.value)}
                 placeholder="e.g. Senior Plot Sales Consultant, Civil Site Supervisor"
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
               />
             </div>
 
@@ -200,7 +200,7 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none"
+                  className="w-full input-3d rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none"
                 >
                   <option value="Plot Sales & Real Estate">Plot Sales & Marketing</option>
                   <option value="Site Supervision & Civil">Civil Site Supervisor</option>
@@ -216,7 +216,7 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                   required
                   value={salary}
                   onChange={(e) => setSalary(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                  className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                 />
               </div>
             </div>
@@ -228,7 +228,7 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                  className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                 />
               </div>
               <div>
@@ -237,7 +237,7 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                   type="text"
                   value={contactPhone}
                   onChange={(e) => setContactPhone(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
+                  className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
                 />
               </div>
             </div>
@@ -249,7 +249,7 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Mention cab pickup for site visits, incentives per plot, shift timings..."
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
               />
             </div>
 
@@ -315,7 +315,7 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                 value={reelTitle}
                 onChange={(e) => setReelTitle(e.target.value)}
                 placeholder="e.g. Talegaon NA Plot Layout Walkthrough, DGPS Demarcation Demo"
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-rose-500"
+                className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
               />
             </div>
 
@@ -324,7 +324,7 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
               <select
                 value={reelCategory}
                 onChange={(e) => setReelCategory(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none"
+                className="w-full input-3d rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none"
               >
                 <option value="Plot Sales & Real Estate">NA Plot Walkthrough / Sales</option>
                 <option value="Site Supervision & Civil">Civil Construction & Road Work</option>
@@ -340,7 +340,7 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                 value={reelCaption}
                 onChange={(e) => setReelCaption(e.target.value)}
                 placeholder="Mention plot location, 7/12 extract status, RERA number, or machine skills..."
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-rose-500"
+                className="w-full input-3d rounded-xl px-3 py-2 text-xs text-white focus:outline-none"
               />
             </div>
 
