@@ -200,12 +200,12 @@ export const PhoneLogin = ({ onPhoneVerified, language = 'en', t }) => {
               </div>
 
               {errorMessage && (
-                <div className="bg-rose-950/70 border-t border-rose-400/40 border-b border-rose-950 rounded-xl p-3 text-rose-200 text-xs leading-relaxed shadow-[inset_0_1px_3px_rgba(0,0,0,0.6)]">
+                <div className="bg-rose-950/50 border border-rose-500/30 rounded-xl p-3 text-rose-200 text-xs leading-relaxed">
                   {errorMessage}
                 </div>
               )}
 
-              <div className="bg-emerald-950/50 border-t border-emerald-400/30 border-b border-emerald-950 rounded-xl p-2.5 flex items-center gap-2 text-[11px] text-emerald-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
+              <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-xl p-2.5 flex items-center gap-2 text-[11px] text-emerald-300">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span>100% Free platform. Secure SMS OTP via Firebase.</span>
               </div>
@@ -235,7 +235,7 @@ export const PhoneLogin = ({ onPhoneVerified, language = 'en', t }) => {
               </div>
 
               {infoMessage && (
-                <div className="bg-emerald-950/60 border-t border-emerald-400/30 rounded-xl p-2.5 text-emerald-300 text-xs leading-relaxed shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]">
+                <div className="bg-emerald-950/50 border border-emerald-500/30 rounded-xl p-2.5 text-emerald-300 text-xs leading-relaxed">
                   {infoMessage}
                 </div>
               )}
@@ -257,7 +257,7 @@ export const PhoneLogin = ({ onPhoneVerified, language = 'en', t }) => {
                 </div>
               </div>
 
-              <div className="bg-emerald-950/40 border-t border-emerald-500/30 rounded-xl p-3 text-center space-y-1 shadow-[inset_0_1px_3px_rgba(0,0,0,0.5)]">
+              <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-xl p-3 text-center space-y-1">
                 <div className="flex items-center justify-center gap-1.5 text-emerald-300 font-medium text-xs">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   <span>SMS Dispatched to +91 {cleanDigits}</span>
@@ -268,7 +268,7 @@ export const PhoneLogin = ({ onPhoneVerified, language = 'en', t }) => {
               </div>
 
               {errorMessage && (
-                <div className="bg-rose-950/70 border-t border-rose-400/40 rounded-xl p-3 text-rose-200 text-xs leading-relaxed shadow-[inset_0_1px_3px_rgba(0,0,0,0.6)]">
+                <div className="bg-rose-950/50 border border-rose-500/30 rounded-xl p-3 text-rose-200 text-xs leading-relaxed">
                   {errorMessage}
                 </div>
               )}
