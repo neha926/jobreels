@@ -20,20 +20,47 @@ import { EmployerPanel } from './components/EmployerPanel';
 import { AdminPanel } from './components/AdminPanel';
 import { ReportModal } from './components/ReportModal';
 import { AuthFlow } from './components/auth/AuthFlow';
+import { PhoneLogin } from './components/auth/PhoneLogin';
+import { RoleSelect } from './components/auth/RoleSelect';
+import { ProfileSetup } from './components/auth/ProfileSetup';
+import { useClerk } from '@clerk/react';
 
 export const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const clerk = useClerk();
 
   // App Global State
   const [currentRole, setCurrentRole] = useState("candidate"); // "candidate", "employer", "admin"
   const [language, setLanguage] = useState("en"); // "en", "hi", "mr"
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Authentication & Multi-User Persistence
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  // Authentication & Onboarding State
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authStep, setAuthStep] = useState("phone"); // "phone" | "role" | "profile"
+  const [authPhone, setAuthPhone] = useState("");
+  const [selectedRole, setSelectedRole] = useState("candidate");
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState(initialCandidateProfile);
+
+  // Restore authenticated session on app launch
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("jobreels_user_session");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.isLoggedIn && parsed.phone) {
+          setIsLoggedIn(true);
+          setCurrentRole(parsed.role || "candidate");
+          setUserProfile(parsed.profile || initialCandidateProfile);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("Session restore error:", e);
+    }
+    setIsLoggedIn(false);
+  }, []);
 
   // Notifications State
   const [notifications, setNotifications] = useState([
@@ -79,14 +106,77 @@ export const App = () => {
 
     const cleanPhone = profileData.phone?.replace(/\D/g, "") || "default";
     localStorage.setItem(`jobreels_user_${cleanPhone}`, JSON.stringify(profileData));
+    localStorage.setItem("jobreels_user_session", JSON.stringify({
+      isLoggedIn: true,
+      phone: cleanPhone,
+      role: role,
+      profile: profileData
+    }));
 
     showToast(`✓ Welcome ${profileData.name || profileData.companyName}! Logged in as ${profileData.phone}`);
   };
 
-  const handleLogout = () => {
+  const finishAuth = (role, customProfile) => {
+    let finalProfile = customProfile;
+    if (!finalProfile) {
+      if (role === "employer") {
+        finalProfile = {
+          companyName: "TechNova Solutions Ltd.",
+          companyType: "Technology & Digital Services",
+          location: "Hinjewadi Phase 1, Pune",
+          hrName: "HR Team",
+          hrPhone: `+91 ${authPhone}`,
+          gstin: "CIN: U72200PN2021PTC19841",
+          verified: true
+        };
+      } else {
+        finalProfile = {
+          ...initialCandidateProfile,
+          phone: `+91 ${authPhone}`,
+          name: "Verified Candidate"
+        };
+      }
+    }
+
+    setIsLoggedIn(true);
+    setCurrentRole(role);
+    setUserProfile(finalProfile);
+
+    localStorage.setItem(
+      "jobreels_user_session",
+      JSON.stringify({
+        isLoggedIn: true,
+        phone: authPhone,
+        role: role,
+        profile: finalProfile
+      })
+    );
+
+    showToast(`✓ Welcome! Logged in as +91 ${authPhone} (${role.toUpperCase()})`);
+
+    if (role === "employer") {
+      navigate("/employer");
+    } else if (role === "admin") {
+      navigate("/admin");
+    } else {
+      navigate("/");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      if (clerk && clerk.signOut) {
+        await clerk.signOut();
+      }
+    } catch (err) {
+      console.warn("Clerk signOut error:", err);
+    }
+    localStorage.removeItem("jobreels_user_session");
     setIsLoggedIn(false);
+    setAuthStep("phone");
+    setAuthPhone("");
     navigate("/");
-    showToast("✓ Logged out successfully. You can log in with any other phone number.");
+    showToast("✓ Logged out successfully.");
   };
 
   // Role Switcher with Multi-Page Navigation
@@ -269,6 +359,54 @@ export const App = () => {
 
   // Determine if bottom nav should be displayed (pages: /, /jobs, /chat, /profile)
   const isCandidateRoute = ["/", "/jobs", "/chat", "/profile"].includes(location.pathname);
+
+  // Mandatory Login Gate (Phone Login -> Role Select -> Profile [or Skip])
+  if (!isLoggedIn) {
+    if (authStep === "phone") {
+      return (
+        <PhoneLogin
+          onPhoneVerified={(phone) => {
+            setAuthPhone(phone);
+            setAuthStep("role");
+          }}
+          language={language}
+          t={t}
+        />
+      );
+    }
+
+    if (authStep === "role") {
+      return (
+        <RoleSelect
+          phone={authPhone}
+          onRoleSelect={(role) => {
+            setSelectedRole(role);
+            if (role === "admin") {
+              finishAuth("admin", {
+                name: "System Admin",
+                phone: `+91 ${authPhone}`,
+                role: "admin",
+                verified: true
+              });
+            } else {
+              setAuthStep("profile");
+            }
+          }}
+        />
+      );
+    }
+
+    if (authStep === "profile") {
+      return (
+        <ProfileSetup
+          role={selectedRole}
+          phone={authPhone}
+          onComplete={(profile) => finishAuth(selectedRole, profile)}
+          onSkip={() => finishAuth(selectedRole, null)}
+        />
+      );
+    }
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-start p-0 sm:py-6 selection:bg-purple-600 selection:text-white">

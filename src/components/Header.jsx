@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  Bell, Globe, Building2, User, Shield, LogIn, 
+  Bell, Globe, Building2, User, Shield, LogIn, LogOut,
   Calendar, CheckCircle, Sparkles
 } from 'lucide-react';
 
@@ -144,25 +144,34 @@ export const Header = ({
             )}
           </div>
 
-          {/* 4. Profile Avatar / Login Icon Button */}
+          {/* 4. Profile Avatar & Logout Buttons */}
           {isLoggedIn ? (
-            <button
-              onClick={onNavigateProfile || onLogout}
-              className="size-8 rounded-xl overflow-hidden border border-zinc-700 hover:border-purple-400 transition-all active:scale-95 active:shadow-md active:shadow-purple-500/30 shadow-xs shrink-0 cursor-pointer"
-              title={`${userProfile?.name || "User"} (Tap to view profile)`}
-            >
-              {userProfile?.avatar ? (
-                <img
-                  src={userProfile.avatar}
-                  alt={userProfile.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-purple-300 font-bold text-xs">
-                  {userProfile?.name?.charAt(0) || "U"}
-                </div>
-              )}
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={onNavigateProfile}
+                className="size-8 rounded-xl overflow-hidden border border-zinc-700 hover:border-purple-400 transition-all active:scale-95 active:shadow-md active:shadow-purple-500/30 shadow-xs shrink-0 cursor-pointer"
+                title={`${userProfile?.name || "User"} (Tap to view profile)`}
+              >
+                {userProfile?.avatar ? (
+                  <img
+                    src={userProfile.avatar}
+                    alt={userProfile.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-zinc-800 flex items-center justify-center text-purple-300 font-bold text-xs">
+                    {userProfile?.name?.charAt(0) || "U"}
+                  </div>
+                )}
+              </button>
+              <button
+                onClick={onLogout}
+                className="size-8 rounded-xl bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-400 hover:text-rose-400 flex items-center justify-center transition-all cursor-pointer"
+                title="Log Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
           ) : (
             <button
               onClick={onOpenLogin}
