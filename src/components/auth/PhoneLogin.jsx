@@ -82,7 +82,9 @@ export const PhoneLogin = ({ onPhoneVerified, language = 'en', t }) => {
       let friendlyMsg = 'Failed to dispatch SMS OTP. ';
       const errMsg = fbErr.message?.toLowerCase() || '';
 
-      if (errMsg.includes('region') || fbErr.code === 'auth/operation-not-allowed' && errMsg.includes('region')) {
+      if (fbErr.code === 'auth/billing-not-enabled' || errMsg.includes('billing-not-enabled')) {
+        friendlyMsg = 'Firebase requires a billing account for real carrier SMS. To test 100% FREE without adding any card, add your mobile number in Firebase Console > Authentication > Sign-in method > Phone > "Phone numbers for testing" with code 123456.';
+      } else if (errMsg.includes('region') || fbErr.code === 'auth/operation-not-allowed' && errMsg.includes('region')) {
         friendlyMsg = 'Firebase SMS Region Policy: India (+91) region is not enabled yet in your Firebase project. Please enable India in Firebase Console > Authentication > Settings > SMS Region Policy, or test with your test number.';
       } else if (fbErr.code === 'auth/operation-not-allowed') {
         friendlyMsg = 'Firebase Phone Authentication is disabled. Please enable "Phone" in Firebase Console > Authentication > Sign-in method.';
