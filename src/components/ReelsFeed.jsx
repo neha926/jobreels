@@ -12,7 +12,7 @@ export const ReelsFeed = ({
   t 
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showPlayIcon, setShowPlayIcon] = useState(false);
   const [likedReels, setLikedReels] = useState({});
@@ -239,30 +239,14 @@ export const ReelsFeed = ({
         </div>
       )}
 
-      {/* Top Left: Reel Counter + Swipe Hint */}
-      <div className="absolute top-4 left-4 z-20 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-        <span className="bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full border border-white/10 flex items-center gap-1">
-          <Compass className="w-3.5 h-3.5 text-emerald-400" />
-          <span>{currentIndex + 1} / {reels.length}</span>
-        </span>
-
-        {swipeHint && (
+      {/* Top Left: Swipe Hint (Reel counter 1/4 removed as requested) */}
+      {swipeHint && (
+        <div className="absolute top-4 left-4 z-20 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
           <span className="bg-emerald-600/90 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-lg border border-emerald-400 animate-bounce flex items-center gap-1">
             <span>Swipe ↕ to next reel</span>
           </span>
-        )}
-      </div>
-
-      {/* Top Right: Sound Button */}
-      <div className="absolute top-4 right-4 z-20" onClick={(e) => e.stopPropagation()}>
-        <button
-          onClick={toggleSound}
-          className="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/80 border border-white/10 transition active:scale-90"
-          title="Toggle Audio"
-        >
-          {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
-        </button>
-      </div>
+        </div>
+      )}
 
       {/* Right Side Compact Action Bar (Like, Comment, Save, Share, Report) */}
       <div className="absolute right-2.5 bottom-24 z-20 flex flex-col items-center gap-2.5" onClick={(e) => e.stopPropagation()}>
@@ -382,9 +366,6 @@ export const ReelsFeed = ({
           <div className="bg-zinc-950/90 border border-purple-500/40 rounded-2xl p-3 backdrop-blur-md shadow-2xl">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <span className="bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider inline-block mb-0.5">
-                  Direct Vacancy ({activeReel.jobDetails.vacancies} Openings)
-                </span>
                 <h3 className="text-xs font-bold text-white leading-tight truncate">
                   {activeReel.jobDetails.title}
                 </h3>

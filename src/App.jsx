@@ -518,6 +518,7 @@ export const App = () => {
               element={
                 <ProfileView
                   profile={userProfile}
+                  currentRole={currentRole}
                   applications={applications}
                   savedJobs={savedJobsList}
                   onApplyJob={handleApplyJob}

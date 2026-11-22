@@ -34,31 +34,17 @@ export const Header = ({
           <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center font-semibold text-white text-xs shadow-md shadow-purple-900/40">
             JR
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-semibold text-sm tracking-tight text-white leading-none">
-                {t?.appName || "JobReels"}
-              </span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400" title="Live & 100% Free"></span>
-            </div>
-            <p className="text-xs text-zinc-400 font-normal leading-none mt-1">Video Career Hub • 100% Free</p>
+          <div className="flex items-center gap-1.5">
+            <span className="font-semibold text-sm tracking-tight text-white leading-none">
+              {t?.appName || "JobReels"}
+            </span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400" title="Live & 100% Free"></span>
           </div>
         </div>
 
         {/* Right Actions */}
         <div className="flex items-center gap-1.5">
-          {/* 1. Locked Role Indicator (Role switching disabled per mobile number) */}
-          <div
-            className="px-2.5 py-1 rounded-xl bg-zinc-900 border border-zinc-800 text-xs font-medium text-zinc-300 flex items-center gap-1.5 shrink-0 select-none"
-            title={`Locked Account Role: ${currentRole === 'candidate' ? 'Job Seeker' : currentRole === 'employer' ? 'Company HR' : 'Admin Console'}`}
-          >
-            <RoleIcon className="w-3.5 h-3.5 text-purple-400" />
-            <span className="text-[11px] font-medium text-zinc-200">
-              {currentRole === 'candidate' ? 'Job Seeker' : currentRole === 'employer' ? 'Company HR' : 'Admin'}
-            </span>
-          </div>
-
-          {/* 2. Notification Bell Icon */}
+          {/* 1. Notification Bell Icon */}
           <div className="relative">
             <button
               onClick={() => {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Send, MapPin, Calendar, Clock, User, Phone, CheckCircle, 
-  ExternalLink, Sparkles, Paperclip, Briefcase 
+  ExternalLink, Sparkles, Paperclip, ChevronLeft, MessageSquare, Search
 } from 'lucide-react';
 
 const initialSeekerChats = {
@@ -11,6 +11,7 @@ const initialSeekerChats = {
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
     phone: '+91 72762 93084',
     jobTitle: 'Frontend React & Web Developer',
+    unread: false,
     messages: [
       {
         id: 'msg-np-1',
@@ -61,6 +62,7 @@ const initialSeekerChats = {
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
     phone: '+91 98221 54321',
     jobTitle: 'Full Stack Node & React Developer',
+    unread: true,
     messages: [
       {
         id: 'msg-gs-1',
@@ -94,6 +96,7 @@ const initialSeekerChats = {
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
     phone: '+91 99234 11223',
     jobTitle: 'UI/UX & Mobile App Designer',
+    unread: false,
     messages: [
       {
         id: 'msg-ps-1',
@@ -112,6 +115,32 @@ const initialSeekerChats = {
         type: 'text'
       }
     ]
+  },
+  'seeker-4': {
+    id: 'seeker-4',
+    name: 'Rahul Deshmukh',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
+    phone: '+91 98234 88776',
+    jobTitle: 'CNC VMC Machine Operator',
+    unread: false,
+    messages: [
+      {
+        id: 'msg-rd-1',
+        sender: 'candidate',
+        senderName: 'Rahul Deshmukh',
+        text: 'Namaste Sir, I applied for the CNC Milling operator role. I have 3 years experience with Fanuc controls.',
+        time: '3 days ago',
+        type: 'text'
+      },
+      {
+        id: 'msg-rd-2',
+        sender: 'employer',
+        senderName: 'Hiring Team',
+        text: 'Hello Rahul, are you available for a 1-day practical trial round at our Bhosari MIDC plant?',
+        time: '3 days ago',
+        type: 'text'
+      }
+    ]
   }
 };
 
@@ -123,14 +152,14 @@ export const ChatView = ({
   t 
 }) => {
   const isEmployer = currentRole === 'employer';
-  const [activeSeekerId, setActiveSeekerId] = useState('seeker-1');
+  // If employer: null means viewing the vertical list of all job seekers; non-null means inside that job seeker's chat
+  const [selectedSeekerId, setSelectedSeekerId] = useState(null);
   const [seekerChats, setSeekerChats] = useState(initialSeekerChats);
   const [inputText, setInputText] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const activeSeeker = seekerChats[activeSeekerId] || seekerChats['seeker-1'];
-
-  // Current message feed: if employer, use the selected job seeker's conversation
-  const activeMessages = isEmployer ? activeSeeker.messages : messages;
+  const activeSeeker = selectedSeekerId ? seekerChats[selectedSeekerId] : null;
+  const activeMessages = isEmployer ? (activeSeeker ? activeSeeker.messages : []) : messages;
 
   const handleSend = (e) => {
     e?.preventDefault();
@@ -145,12 +174,12 @@ export const ChatView = ({
       type: 'text'
     };
 
-    if (isEmployer) {
+    if (isEmployer && selectedSeekerId) {
       setSeekerChats((prev) => ({
         ...prev,
-        [activeSeekerId]: {
-          ...prev[activeSeekerId],
-          messages: [...prev[activeSeekerId].messages, newMsg]
+        [selectedSeekerId]: {
+          ...prev[selectedSeekerId],
+          messages: [...prev[selectedSeekerId].messages, newMsg]
         }
       }));
     } else {
@@ -170,12 +199,12 @@ export const ChatView = ({
       type: 'text'
     };
 
-    if (isEmployer) {
+    if (isEmployer && selectedSeekerId) {
       setSeekerChats((prev) => ({
         ...prev,
-        [activeSeekerId]: {
-          ...prev[activeSeekerId],
-          messages: [...prev[activeSeekerId].messages, newMsg]
+        [selectedSeekerId]: {
+          ...prev[selectedSeekerId],
+          messages: [...prev[selectedSeekerId].messages, newMsg]
         }
       }));
     } else {
@@ -183,82 +212,152 @@ export const ChatView = ({
     }
   };
 
+  // EMPLOYER VIEW: STEP 1 - VERTICAL LIST OF JOB SEEKERS
+  if (isEmployer && !selectedSeekerId) {
+    const filteredSeekers = Object.values(seekerChats).filter(s => 
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.jobTitle.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return (
+      <div className="flex flex-col h-[calc(100vh-120px)] max-h-[820px] max-w-md mx-auto bg-zinc-950 border-x border-zinc-800">
+        {/* Vertical List Header */}
+        <div className="bg-zinc-900 p-3.5 border-b border-zinc-800 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-1.5">
+              <h2 className="font-semibold text-sm text-white">Job Seeker Messages</h2>
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+            </div>
+            <p className="text-xs text-zinc-400 font-normal">
+              {Object.keys(seekerChats).length} Candidates Applied • Direct Chat
+            </p>
+          </div>
+          <span className="px-2 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/30 text-purple-300 text-[11px] font-medium">
+            HR Inbox
+          </span>
+        </div>
+
+        {/* Search Bar */}
+        <div className="p-3 bg-zinc-950 border-b border-zinc-800/80">
+          <div className="flex items-center bg-zinc-900/80 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-300">
+            <Search className="w-3.5 h-3.5 text-zinc-400 mr-2 shrink-0" />
+            <input
+              type="text"
+              placeholder="Search candidate by name or skill..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-transparent text-white w-full outline-none text-xs placeholder-zinc-500 font-normal"
+            />
+          </div>
+        </div>
+
+        {/* Vertical List of Job Seekers */}
+        <div className="flex-1 overflow-y-auto divide-y divide-zinc-800/60 no-scrollbar">
+          {filteredSeekers.map((seeker) => {
+            const lastMsg = seeker.messages[seeker.messages.length - 1];
+            return (
+              <button
+                key={seeker.id}
+                type="button"
+                onClick={() => setSelectedSeekerId(seeker.id)}
+                className="w-full p-3.5 flex items-center gap-3 hover:bg-zinc-900/60 transition text-left cursor-pointer active:bg-zinc-850 group"
+              >
+                <div className="relative shrink-0">
+                  <img
+                    src={seeker.avatar}
+                    alt={seeker.name}
+                    className="w-12 h-12 rounded-2xl object-cover border border-purple-500/30 group-hover:border-purple-400 transition"
+                  />
+                  <span className="w-3 h-3 bg-emerald-400 rounded-full absolute bottom-0 right-0 border-2 border-zinc-950"></span>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <h3 className="font-medium text-sm text-white truncate group-hover:text-purple-300 transition">
+                      {seeker.name}
+                    </h3>
+                    <span className="text-[11px] text-zinc-400 shrink-0 font-normal">
+                      {lastMsg?.time || 'Today'}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-purple-400 font-normal truncate mb-1">
+                    {seeker.jobTitle}
+                  </p>
+
+                  <p className="text-xs text-zinc-400 truncate font-normal">
+                    {lastMsg?.text || 'No messages yet'}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // CHAT SCREEN (Inside active Job Seeker's chat OR Candidate view)
   return (
     <div className="flex flex-col h-[calc(100vh-120px)] max-h-[820px] max-w-md mx-auto bg-zinc-950 border-x border-zinc-800">
       {/* Chat Contact Header */}
       <div className="bg-zinc-900 p-3.5 border-b border-zinc-800 flex items-center justify-between">
-        <div className="flex items-center gap-2.5 min-w-0">
+        <div className="flex items-center gap-2 min-w-0">
+          {/* Back button to vertical list of candidates for HR */}
+          {isEmployer && (
+            <button
+              type="button"
+              onClick={() => setSelectedSeekerId(null)}
+              className="p-1.5 -ml-1 text-zinc-400 hover:text-white rounded-lg hover:bg-zinc-800 transition cursor-pointer"
+              title="Back to all candidates"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
+
           <div className="relative shrink-0">
             <img
               src={
                 isEmployer
-                  ? activeSeeker.avatar
+                  ? activeSeeker?.avatar
                   : 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80'
               }
-              alt={isEmployer ? activeSeeker.name : 'HR'}
+              alt={isEmployer ? activeSeeker?.name : 'HR'}
               className="w-10 h-10 rounded-full object-cover border border-purple-400"
             />
             {/* Semantic Green Dot for Online */}
             <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full absolute bottom-0 right-0 border-2 border-zinc-950"></span>
           </div>
+
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <h3 className="font-semibold text-sm text-white truncate">
+              <h3 className="font-medium text-sm text-white truncate">
                 {isEmployer
-                  ? `${activeSeeker.name} (Job Seeker)`
+                  ? `${activeSeeker?.name}`
                   : 'Anand Kulkarni (Senior HR)'}
               </h3>
               <CheckCircle className="w-3.5 h-3.5 text-purple-400 fill-purple-500 text-white shrink-0" />
             </div>
             <p className="text-xs text-zinc-400 font-normal truncate">
               {isEmployer
-                ? `${activeSeeker.jobTitle} • Online`
+                ? `${activeSeeker?.jobTitle} • Online`
                 : 'Bharat Forge Precision Ltd. • Online'}
             </p>
           </div>
         </div>
 
         <a
-          href={`tel:${isEmployer ? activeSeeker.phone : '+919822011223'}`}
+          href={`tel:${isEmployer ? activeSeeker?.phone : '+919822011223'}`}
           className="p-2 rounded-xl bg-zinc-800 text-purple-300 hover:text-white border border-zinc-700 active:scale-95 active:shadow-md active:shadow-purple-500/30 transition-all cursor-pointer shrink-0 ml-2"
-          title={isEmployer ? `Call ${activeSeeker.name}` : 'Direct Call HR'}
+          title={isEmployer ? `Call ${activeSeeker?.name}` : 'Direct Call HR'}
         >
           <Phone className="w-4 h-4" />
         </a>
       </div>
 
-      {/* HR View: List of Job Seekers / Applicants */}
-      {isEmployer && (
-        <div className="bg-zinc-900/90 border-b border-zinc-800 px-3 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
-          <span className="text-[11px] font-medium text-zinc-400 shrink-0">
-            Job Seekers:
-          </span>
-          {Object.values(seekerChats).map((seeker) => {
-            const isSelected = activeSeekerId === seeker.id;
-            return (
-              <button
-                key={seeker.id}
-                type="button"
-                onClick={() => setActiveSeekerId(seeker.id)}
-                className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
-                  isSelected
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : 'bg-zinc-800/80 text-zinc-300 hover:bg-zinc-750'
-                }`}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                <span>{seeker.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
-
       {/* Messages Scroll Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3.5 no-scrollbar bg-zinc-950/60">
         {activeMessages.map((msg) => {
-          // In Employer view, messages from "employer" are mine (right side); from "candidate" are received (left side)
-          // In Candidate view, messages from "candidate" are mine (right side); from "employer" are received (left side)
           const isMine = isEmployer ? msg.sender === 'employer' : msg.sender === 'candidate';
 
           if (msg.type === 'interview_card') {
@@ -270,15 +369,15 @@ export const ChatView = ({
                   <div className="flex items-center justify-between pb-2 mb-2 border-b border-purple-700/30">
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                      <h4 className="font-semibold text-xs text-purple-300 uppercase tracking-wider">
+                      <h4 className="font-medium text-xs text-purple-300 uppercase tracking-wider">
                         {t?.interviewInvite || 'Interview Invitation'}
                       </h4>
                     </div>
-                    <span className="text-xs text-zinc-500">{msg.time}</span>
+                    <span className="text-xs text-zinc-500 font-normal">{msg.time}</span>
                   </div>
 
                   <p className="text-xs text-zinc-200 font-normal mb-3">
-                    {iv.company} has scheduled practical trial & interview:
+                    {iv.company} practical trial & interview details:
                   </p>
 
                   <div className="space-y-1.5 text-xs text-zinc-300 bg-zinc-950/80 p-3 rounded-xl border border-zinc-800 mb-3 font-normal">
@@ -304,7 +403,7 @@ export const ChatView = ({
                     href={iv.mapsUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full btn-purple text-xs font-medium py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full btn-purple text-xs font-medium py-2 px-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <MapPin className="w-4 h-4" />
                     <span>{t?.openMaps || 'Open in Maps'}</span>
@@ -328,7 +427,7 @@ export const ChatView = ({
                 }`}
               >
                 {!isMine && (
-                  <span className="block text-xs font-medium text-purple-300 mb-0.5">
+                  <span className="block text-[11px] font-medium text-purple-300 mb-0.5">
                     {msg.senderName}
                   </span>
                 )}
@@ -410,7 +509,7 @@ export const ChatView = ({
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          placeholder={isEmployer ? 'Type message to job seeker...' : 'Type message to HR...'}
+          placeholder={isEmployer ? `Message ${activeSeeker?.name || 'candidate'}...` : 'Type message to HR...'}
           className="flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/40 transition font-normal"
         />
         <button

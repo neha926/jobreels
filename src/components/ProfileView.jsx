@@ -8,6 +8,7 @@ import {
 
 export const ProfileView = ({ 
   profile, 
+  currentRole = "candidate",
   applications, 
   savedJobs, 
   onApplyJob, 
@@ -287,9 +288,16 @@ export const ProfileView = ({
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between gap-1">
-              <h2 className="font-bold text-base text-white truncate">
-                {profile.name}
-              </h2>
+              <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
+                <h2 className="font-bold text-base text-white truncate">
+                  {profile.name}
+                </h2>
+                <CheckCircle className="w-4 h-4 text-purple-400 fill-purple-500 text-white shrink-0" title="Verified" />
+                <span className="px-2 py-0.5 rounded-lg bg-zinc-800 border border-zinc-700 text-[11px] font-medium text-zinc-300 flex items-center gap-1 shrink-0">
+                  {currentRole === 'employer' ? <Building2 className="w-3 h-3 text-purple-400" /> : <ShieldCheck className="w-3 h-3 text-purple-400" />}
+                  <span>{currentRole === 'candidate' ? 'Job Seeker' : currentRole === 'employer' ? 'Company HR' : 'Admin'}</span>
+                </span>
+              </div>
               {/* Settings Icon Button (Minimal Icon Only as Requested) */}
               <button
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
@@ -553,12 +561,9 @@ export const ProfileView = ({
 
           {/* Formatted Digital Resume Card */}
           <div className="bg-zinc-900 text-zinc-100 rounded-2xl p-4.5 shadow-sm border border-zinc-800 relative">
-            {/* Semantic Verified Candidate Stamp */}
-            <div className="absolute top-4 right-4 text-right">
-              <span className="border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 font-semibold text-xs px-2.5 py-0.5 rounded-lg inline-block">
-                Verified Candidate
-              </span>
-              <span className="text-xs text-zinc-500 mt-0.5 block">JobReels ID #8921</span>
+            {/* Verification Tick Stamp */}
+            <div className="absolute top-4 right-4 flex items-center gap-1.5" title="Verified Profile">
+              <CheckCircle className="w-5 h-5 text-emerald-400 fill-emerald-500/20" />
             </div>
 
             <div className="border-b border-zinc-800 pb-3 mb-3 pr-28">
@@ -968,13 +973,9 @@ export const ProfileView = ({
                 <span>⏱️ Experience: {profile.experience}</span>
               </div>
             </div>
-            <div style={{ textAlign: 'center', border: '2px solid #7c3aed', borderRadius: '8px', padding: '6px 12px', background: '#faf5ff' }}>
-              <div style={{ color: '#6d28d9', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Verified Candidate
-              </div>
-              <div style={{ color: '#64748b', fontSize: '9px', marginTop: '2px' }}>
-                JobReels ID #8921
-              </div>
+            <div style={{ textAlign: 'center', border: '2px solid #10b981', borderRadius: '8px', padding: '6px 10px', background: '#ecfdf5', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: '#059669', fontSize: '14px', fontWeight: 'bold' }}>✓</span>
+              <span style={{ color: '#059669', fontSize: '11px', fontWeight: '700' }}>Verified</span>
             </div>
           </div>
 
