@@ -23,6 +23,8 @@ import { AuthFlow } from './components/auth/AuthFlow';
 import { PhoneLogin } from './components/auth/PhoneLogin';
 import { RoleSelect } from './components/auth/RoleSelect';
 import { ProfileSetup } from './components/auth/ProfileSetup';
+import { AssistantChat } from './components/AssistantChat';
+import { AIAssistant } from './components/ai/AIAssistant';
 import { useClerk } from '@clerk/react';
 
 export const App = () => {
@@ -32,7 +34,7 @@ export const App = () => {
 
   // App Global State
   const [currentRole, setCurrentRole] = useState("candidate"); // "candidate", "employer", "admin"
-  const [language, setLanguage] = useState("en"); // "en", "hi", "mr"
+  const [language, setLanguageState] = useState(() => localStorage.getItem("jobreels_language") || "mr");
   const [toastMessage, setToastMessage] = useState(null);
 
   // Authentication & Onboarding State
@@ -42,6 +44,14 @@ export const App = () => {
   const [selectedRole, setSelectedRole] = useState("candidate");
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState(initialCandidateProfile);
+
+  // Reels AI assistant onboarding (asks for profile details after login)
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [assistantStartAt, setAssistantStartAt] = useState(null);
+
+  // 3D Anime AI Assistant (Reels)
+  const [isAIOpen, setIsAIOpen] = useState(false);
+  const [assistantSearchQuery, setAssistantSearchQuery] = useState("");
 
   // Restore authenticated session on app launch
   useEffect(() => {
@@ -96,9 +106,35 @@ export const App = () => {
 
   const t = translations[language] || translations.en;
 
+  const setLanguage = (nextLanguage) => {
+    const next = translations[nextLanguage] ? nextLanguage : "mr";
+    localStorage.setItem("jobreels_language", next);
+    setLanguageState(next);
+  };
+
+  const handleSwabheeNavigate = (action) => {
+    if (action?.type === "open") {
+      setIsAIOpen(true);
+      return;
+    }
+    if (action?.type === "navigate" && action.path) {
+      setAssistantSearchQuery(action.search || "");
+      navigate(action.path);
+    }
+  };
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  // Open the Reels AI onboarding assistant for users who have not completed/skipped it yet
+  const autoOpenAssistant = (role, cleanPhone) => {
+    if (role === "admin" || !cleanPhone) return;
+    if (!localStorage.getItem(`jobreels_onboarded_${cleanPhone}`)) {
+      setAssistantStartAt(null);
+      setIsAssistantOpen(true);
+    }
   };
 
   // Login Success Handler (Multi-User Persistence by Mobile Number)
@@ -117,6 +153,8 @@ export const App = () => {
     }));
 
     showToast(`✓ Welcome ${profileData.name || profileData.companyName}! Logged in as ${profileData.phone}`);
+
+    autoOpenAssistant(role, cleanPhone === "default" ? "" : cleanPhone);
   };
 
   const finishAuth = (role, customProfile, explicitPhone) => {
@@ -167,6 +205,8 @@ export const App = () => {
 
     showToast(`✓ Welcome! Logged in as +91 ${cleanPhone} (${lockedRole === 'candidate' ? 'Job Seeker' : lockedRole === 'employer' ? 'Company HR' : 'Admin'})`);
 
+    autoOpenAssistant(lockedRole, cleanPhone);
+
     if (lockedRole === "employer") {
       navigate("/employer");
     } else if (lockedRole === "admin") {
@@ -188,8 +228,46 @@ export const App = () => {
     setIsLoggedIn(false);
     setAuthStep("phone");
     setAuthPhone("");
+    setIsAssistantOpen(false);
     navigate("/");
     showToast("✓ Logged out successfully.");
+  };
+
+  // Reels AI assistant: persist collected profile fields
+  const handleAssistantSave = (patch) => {
+    const merged = { ...userProfile };
+    if (patch.name) merged.name = patch.name;
+    if (patch.organization) merged.organization = patch.organization;
+    if (patch.education) merged.education = patch.education;
+    if (patch.projectExperience) merged.projectExperience = patch.projectExperience;
+    if (patch.skills?.length) merged.skills = patch.skills;
+    if (patch.avatar) merged.avatar = patch.avatar;
+    if (currentRole === "employer") {
+      if (patch.organization) merged.companyName = patch.organization;
+      if (patch.name) merged.hrName = patch.name;
+    }
+
+    const cleanPhone = (merged.phone || authPhone || "").replace(/\D/g, "");
+    setUserProfile(merged);
+    if (cleanPhone) {
+      localStorage.setItem(`jobreels_profile_${cleanPhone}`, JSON.stringify(merged));
+      localStorage.setItem(`jobreels_user_${cleanPhone}`, JSON.stringify(merged));
+      localStorage.setItem(
+        "jobreels_user_session",
+        JSON.stringify({ isLoggedIn: true, phone: cleanPhone, role: currentRole, profile: merged })
+      );
+      localStorage.setItem(`jobreels_onboarded_${cleanPhone}`, "true");
+    }
+    showToast("✓ Profile updated by Reels AI");
+  };
+
+  // Reels AI assistant: dismiss (implies skip; can be reopened from the edit pencil)
+  const handleAssistantDismiss = () => {
+    setIsAssistantOpen(false);
+    const cleanPhone = (userProfile.phone || authPhone || "").replace(/\D/g, "");
+    if (cleanPhone) {
+      localStorage.setItem(`jobreels_onboarded_${cleanPhone}`, "true");
+    }
   };
 
   // Role Switcher with Multi-Page Navigation
@@ -272,19 +350,31 @@ export const App = () => {
   };
 
   const handleAddReel = (newReelData) => {
+    // Safe name fallback for both roles (employers may only have companyName/hrName)
+    const creatorName =
+      userProfile.name ||
+      userProfile.hrName ||
+      userProfile.companyName ||
+      "JobReels Creator";
+    const handle = `@${creatorName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+      .slice(0, 24)}`;
+
     const createdReel = {
+      ...newReelData,
       id: `reel-${Date.now()}`,
       likes: 1,
       comments: 0,
       shares: 0,
       creator: {
-        name: userProfile.name,
-        handle: `@${userProfile.name.toLowerCase().replace(/\s+/g, "_")}`,
-        avatar: userProfile.avatar,
+        name: creatorName,
+        handle,
+        avatar: userProfile.avatar || newReelData.creator?.avatar,
         verified: true,
-        role: currentRole === "employer" ? "Verified Employer" : userProfile.headline
-      },
-      ...newReelData
+        role: currentRole === "employer" ? "Verified Employer" : userProfile.headline || newReelData.creator?.role
+      }
     };
     setReels((prev) => [createdReel, ...prev]);
     showToast("✓ Skill video reel published to feed! Visible across India.");
@@ -477,6 +567,7 @@ export const App = () => {
                   onApplyJob={handleApplyJob}
                   appliedJobIds={appliedJobIds}
                   onReport={(reel) => setReportTarget(reel)}
+                  onOpenPost={() => setIsPostModalOpen(true)}
                   t={t}
                 />
               }
@@ -493,6 +584,7 @@ export const App = () => {
                   savedJobIds={savedJobIds}
                   onToggleSaveJob={handleToggleSaveJob}
                   onReport={(job) => setReportTarget(job)}
+                  initialSearchQuery={assistantSearchQuery}
                   t={t}
                 />
               }
@@ -525,6 +617,10 @@ export const App = () => {
                   appliedJobIds={appliedJobIds}
                   onLogout={handleLogout}
                   onOpenLogin={() => setIsAuthModalOpen(true)}
+                  onEditProfile={(stepKey) => {
+                    setAssistantStartAt(stepKey || null);
+                    setIsAssistantOpen(true);
+                  }}
                   language={language}
                   setLanguage={setLanguage}
                   t={t}
@@ -583,6 +679,7 @@ export const App = () => {
             unreadMessages={1}
           />
         )}
+
       </div>
 
       {/* Multi-User Mobile OTP & Profile Creation Wizard */}
@@ -594,6 +691,46 @@ export const App = () => {
         language={language}
         t={t}
       />
+
+      {/* Reels AI Assistant: guided profile setup / editing */}
+      <AssistantChat
+        isOpen={isAssistantOpen && !isAuthModalOpen}
+        onClose={handleAssistantDismiss}
+        onSkip={handleAssistantDismiss}
+        role={currentRole}
+        profile={userProfile}
+        startAt={assistantStartAt}
+        onSave={handleAssistantSave}
+        t={t}
+      />
+
+      {/* 2D Anime AI Assistant (Reels) — only after login */}
+      {isLoggedIn && (
+        <AIAssistant
+          isOpen={isAIOpen}
+          onClose={() => setIsAIOpen(false)}
+          language={language}
+          context={{
+            language,
+            role: currentRole,
+            path: location.pathname,
+            profile: userProfile,
+            jobs,
+            reels,
+            myApplications: currentRole === "candidate"
+              ? applications.filter((application) =>
+                  (application.candidateId && application.candidateId === userProfile.id) ||
+                  (application.candidateName && userProfile.name &&
+                    application.candidateName.trim().toLocaleLowerCase() === userProfile.name.trim().toLocaleLowerCase())
+                )
+              : applications,
+            savedJobs: savedJobsList,
+            notifications,
+            fraudReports: currentRole === "admin" ? fraudReports : []
+          }}
+          onNavigate={handleSwabheeNavigate}
+        />
+      )}
 
       {/* Post Modal (+ Button Flow) */}
       <PostModal

@@ -108,7 +108,9 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
     e.preventDefault();
     if (!reelTitle) return;
 
-    const finalVideoUrl = videoPreviewUrl || "/videos/reel1.mp4";
+    // Prefer the uploaded Cloudinary URL, fall back to the local blob URL so the
+    // reel always plays even if the Cloudinary key/preset is invalid (401).
+    const finalVideoUrl = videoPreviewUrl || (videoFile ? URL.createObjectURL(videoFile) : "/videos/reel1.mp4");
 
     const newReel = {
       id: `reel-${Date.now()}`,
@@ -202,11 +204,30 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                   onChange={(e) => setCategory(e.target.value)}
                   className="w-full input-3d rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none"
                 >
-                  <option value="Plot Sales & Real Estate">Plot Sales & Marketing</option>
-                  <option value="Site Supervision & Civil">Civil Site Supervisor</option>
-                  <option value="Land Survey & Demarcation">Land Surveyor (Total Station)</option>
-                  <option value="Telecalling & Customer Care">Telecaller & CRM</option>
-                  <option value="Heavy Machinery & Earthmoving">JCB & Machine Operator</option>
+                  <option value="Tech & Software">Tech & Software</option>
+                  <option value="Sales & Marketing">Sales & Marketing</option>
+                  <option value="Delivery & Logistics">Delivery & Logistics</option>
+                  <option value="Customer Support & BPO">Customer Support & BPO</option>
+                  <option value="Accounts & Finance">Accounts & Finance</option>
+                  <option value="Design & Creative">Design & Creative</option>
+                  <option value="Real Estate & Construction">Real Estate & Construction</option>
+                  <option value="Manufacturing & Production">Manufacturing & Production</option>
+                  <option value="Healthcare & Medical">Healthcare & Medical</option>
+                  <option value="Education & Training">Education & Training</option>
+                  <option value="Hospitality & Hotel">Hospitality & Hotel</option>
+                  <option value="Retail & Store">Retail & Store</option>
+                  <option value="Automobile & Driving">Automobile & Driving</option>
+                  <option value="Banking & Insurance">Banking & Insurance</option>
+                  <option value="Data & Analytics">Data & Analytics</option>
+                  <option value="Content & Writing">Content & Writing</option>
+                  <option value="Telecom & Networking">Telecom & Networking</option>
+                  <option value="Electrical & Electronics">Electrical & Electronics</option>
+                  <option value="Agriculture & Farming">Agriculture & Farming</option>
+                  <option value="Security & Housekeeping">Security & Housekeeping</option>
+                  <option value="HR & Recruitment">HR & Recruitment</option>
+                  <option value="Law & Legal">Law & Legal</option>
+                  <option value="Oil, Gas & Energy">Oil, Gas & Energy</option>
+                  <option value="Government & Public Sector">Government & Public Sector</option>
                 </select>
               </div>
               <div>
@@ -326,10 +347,30 @@ export const PostModal = ({ isOpen, onClose, onAddJob, onAddReel, t }) => {
                 onChange={(e) => setReelCategory(e.target.value)}
                 className="w-full input-3d rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none"
               >
-                <option value="Plot Sales & Real Estate">NA Plot Walkthrough / Sales</option>
-                <option value="Site Supervision & Civil">Civil Construction & Road Work</option>
-                <option value="Land Survey & Demarcation">Land Demarcation & Survey</option>
-                <option value="Heavy Machinery & Earthmoving">JCB 3DX & Excavator Action</option>
+                <option value="Tech & Software">Tech & Software</option>
+                <option value="Sales & Marketing">Sales & Marketing</option>
+                <option value="Delivery & Logistics">Delivery & Logistics</option>
+                <option value="Customer Support & BPO">Customer Support & BPO</option>
+                <option value="Accounts & Finance">Accounts & Finance</option>
+                <option value="Design & Creative">Design & Creative</option>
+                <option value="Real Estate & Construction">Real Estate & Construction</option>
+                <option value="Manufacturing & Production">Manufacturing & Production</option>
+                <option value="Healthcare & Medical">Healthcare & Medical</option>
+                <option value="Education & Training">Education & Training</option>
+                <option value="Hospitality & Hotel">Hospitality & Hotel</option>
+                <option value="Retail & Store">Retail & Store</option>
+                <option value="Automobile & Driving">Automobile & Driving</option>
+                <option value="Banking & Insurance">Banking & Insurance</option>
+                <option value="Data & Analytics">Data & Analytics</option>
+                <option value="Content & Writing">Content & Writing</option>
+                <option value="Telecom & Networking">Telecom & Networking</option>
+                <option value="Electrical & Electronics">Electrical & Electronics</option>
+                <option value="Agriculture & Farming">Agriculture & Farming</option>
+                <option value="Security & Housekeeping">Security & Housekeeping</option>
+                <option value="HR & Recruitment">HR & Recruitment</option>
+                <option value="Law & Legal">Law & Legal</option>
+                <option value="Oil, Gas & Energy">Oil, Gas & Energy</option>
+                <option value="Government & Public Sector">Government & Public Sector</option>
               </select>
             </div>
 

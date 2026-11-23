@@ -3,7 +3,8 @@ import { useClerk } from '@clerk/react';
 import { 
   FileText, Download, Share2, CheckCircle, MapPin, 
   Briefcase, GraduationCap, Award, Bookmark, Phone, QrCode, Clock, ExternalLink,
-  LogOut, ShieldCheck, RefreshCw, AlertTriangle, ChevronDown, Settings, Globe, Building2, Sparkles, Check
+  LogOut, ShieldCheck, RefreshCw, AlertTriangle, ChevronDown, Settings, Globe, Building2, Sparkles, Check,
+  Pencil, Camera
 } from 'lucide-react';
 
 export const ProfileView = ({ 
@@ -15,6 +16,7 @@ export const ProfileView = ({
   appliedJobIds, 
   onLogout,
   onOpenLogin,
+  onEditProfile,
   language = "en",
   setLanguage,
   t 
@@ -284,6 +286,16 @@ export const ProfileView = ({
                 <CheckCircle className="w-3.5 h-3.5 fill-purple-600 text-white" />
               </span>
             )}
+            {/* Edit profile picture (pencil) */}
+            <button
+              type="button"
+              onClick={() => onEditProfile?.('photo')}
+              className="absolute -bottom-1 -left-1 w-6 h-6 rounded-full bg-zinc-950 border border-purple-500/50 text-purple-300 hover:text-white flex items-center justify-center cursor-pointer active:scale-90 shadow"
+              title="Change profile picture"
+              aria-label="Change profile picture"
+            >
+              <Camera className="w-3 h-3" />
+            </button>
           </div>
 
           <div className="flex-1 min-w-0">
@@ -298,24 +310,40 @@ export const ProfileView = ({
                   <span>{currentRole === 'candidate' ? 'Job Seeker' : currentRole === 'employer' ? 'Company HR' : 'Admin'}</span>
                 </span>
               </div>
-              {/* Settings Icon Button (Minimal Icon Only as Requested) */}
-              <button
-                onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all active:scale-95 cursor-pointer ${
-                  isSettingsOpen
-                    ? "bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-900/40"
-                    : "bg-zinc-950/70 hover:bg-zinc-850 border-zinc-800 text-zinc-300"
-                }`}
-                title="Settings & Preferences"
-                aria-label="Settings"
-              >
-                <Settings className={`w-4 h-4 ${isSettingsOpen ? 'text-white' : 'text-purple-400'}`} />
-              </button>
+              {/* Edit Profile Pencil + Settings Icon Button */}
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  onClick={() => onEditProfile?.('name')}
+                  className="w-8 h-8 rounded-xl border bg-zinc-950/70 hover:bg-zinc-850 border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-all active:scale-95 cursor-pointer"
+                  title="Edit profile details"
+                  aria-label="Edit profile"
+                >
+                  <Pencil className="w-4 h-4 text-purple-400" />
+                </button>
+                <button
+                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                  className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all active:scale-95 cursor-pointer ${
+                    isSettingsOpen
+                      ? "bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-900/40"
+                      : "bg-zinc-950/70 hover:bg-zinc-850 border-zinc-800 text-zinc-300"
+                  }`}
+                  title="Settings & Preferences"
+                  aria-label="Settings"
+                >
+                  <Settings className={`w-4 h-4 ${isSettingsOpen ? 'text-white' : 'text-purple-400'}`} />
+                </button>
+              </div>
             </div>
             {/* Rich Purple Role Headline */}
             <p className="text-xs text-purple-400 font-semibold mt-0.5 truncate">
               {profile.headline}
             </p>
+            {profile.organization && (
+              <p className="text-[11px] text-zinc-400 font-medium flex items-center gap-1 truncate mt-0.5">
+                <Building2 className="w-3 h-3 text-purple-400 shrink-0" />
+                <span className="truncate">{profile.organization}</span>
+              </p>
+            )}
             <div className="flex items-center justify-between gap-1 mt-1">
               <p className="text-xs text-zinc-400 flex items-center gap-1 truncate">
                 <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
@@ -541,21 +569,22 @@ export const ProfileView = ({
       {/* TAB 1: AUTOMATIC DIGITAL RESUME */}
       {activeTab === "resume" && (
         <div className="space-y-3">
-          {/* Action Buttons: Rich Purple Button + Click Shadow */}
+          {/* Action Buttons: download resume + share */}
           <div className="flex gap-2">
             <button
               onClick={handleDownloadPDF}
               className="flex-1 btn-purple text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+              title={t.downloadPDF || "Download PDF Resume"}
             >
               <Download className="w-4 h-4" />
-              <span>{t.downloadPDF || "Download PDF Resume"}</span>
+              <span>{t.downloadPDF || "Download Resume"}</span>
             </button>
             <button
               onClick={handleShareResumeWhatsApp}
-              className="flex-1 bg-zinc-850 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/80 font-semibold text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 active:scale-95 active:shadow-md active:shadow-purple-500/20 transition-all cursor-pointer"
+              className="bg-zinc-850 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/80 font-semibold text-xs py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 active:scale-95 active:shadow-md active:shadow-purple-500/20 transition-all cursor-pointer"
+              title={t.shareWhatsApp || "Share on WhatsApp"}
             >
               <Share2 className="w-4 h-4 text-emerald-400" />
-              <span>{t.shareWhatsApp || "Share on WhatsApp"}</span>
             </button>
           </div>
 
@@ -578,10 +607,11 @@ export const ProfileView = ({
 
             {/* DROPDOWN 1: CORE SKILLS (VIDEO VERIFIED) */}
             <div className="box-inset-3d overflow-hidden mb-2.5">
+              <div className="flex items-center">
               <button
                 type="button"
                 onClick={() => toggleDropdown("skills")}
-                className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
+                className="flex-1 flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-xl bg-purple-900/40 text-purple-300 border border-purple-700/50 flex items-center justify-center shrink-0">
@@ -600,6 +630,16 @@ export const ProfileView = ({
                   openDropdowns.skills ? "rotate-180 text-purple-400" : ""
                 }`} />
               </button>
+              <button
+                type="button"
+                onClick={() => onEditProfile?.('skills')}
+                className="p-2 mr-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-900 cursor-pointer active:scale-90 shrink-0"
+                title="Edit skills"
+                aria-label="Edit skills"
+              >
+                <Pencil className="w-3.5 h-3.5 text-purple-400" />
+              </button>
+              </div>
 
               {openDropdowns.skills && (
                 <div className="p-3 pt-1 border-t border-zinc-800/80 bg-zinc-950/40 animate-in fade-in duration-150">
@@ -623,10 +663,11 @@ export const ProfileView = ({
 
             {/* DROPDOWN 2: EDUCATION & CERTIFICATIONS */}
             <div className="box-inset-3d overflow-hidden mb-2.5">
+              <div className="flex items-center">
               <button
                 type="button"
                 onClick={() => toggleDropdown("education")}
-                className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
+                className="flex-1 flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-xl bg-purple-900/40 text-purple-300 border border-purple-700/50 flex items-center justify-center shrink-0">
@@ -645,6 +686,16 @@ export const ProfileView = ({
                   openDropdowns.education ? "rotate-180 text-purple-400" : ""
                 }`} />
               </button>
+              <button
+                type="button"
+                onClick={() => onEditProfile?.('education')}
+                className="p-2 mr-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-900 cursor-pointer active:scale-90 shrink-0"
+                title="Edit education"
+                aria-label="Edit education"
+              >
+                <Pencil className="w-3.5 h-3.5 text-purple-400" />
+              </button>
+              </div>
 
               {openDropdowns.education && (
                 <div className="p-3 pt-1 border-t border-zinc-800/80 bg-zinc-950/40 animate-in fade-in duration-150">
@@ -670,10 +721,11 @@ export const ProfileView = ({
 
             {/* DROPDOWN 3: PROJECT & WORK EXPERIENCE (ORGANIZATIONS + COLLEGE PROJECTS) */}
             <div className="box-inset-3d overflow-hidden mb-3">
+              <div className="flex items-center">
               <button
                 type="button"
                 onClick={() => toggleDropdown("experience")}
-                className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
+                className="flex-1 flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 active:scale-[0.99] active:shadow-md active:shadow-purple-500/25 transition-all cursor-pointer select-none"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-xl bg-purple-900/40 text-purple-300 border border-purple-700/50 flex items-center justify-center shrink-0">
@@ -692,6 +744,16 @@ export const ProfileView = ({
                   openDropdowns.experience ? "rotate-180 text-purple-400" : ""
                 }`} />
               </button>
+              <button
+                type="button"
+                onClick={() => onEditProfile?.('projects')}
+                className="p-2 mr-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-900 cursor-pointer active:scale-90 shrink-0"
+                title="Edit experience"
+                aria-label="Edit experience"
+              >
+                <Pencil className="w-3.5 h-3.5 text-purple-400" />
+              </button>
+              </div>
 
               {openDropdowns.experience && (
                 <div className="p-3 pt-2 border-t border-zinc-800/80 bg-zinc-950/40 animate-in fade-in duration-150 space-y-3">
@@ -849,6 +911,21 @@ export const ProfileView = ({
                       ))}
                     </div>
                   </div>
+
+                  {/* PART 3: EXPERIENCE ADDED VIA REELS AI ASSISTANT */}
+                  {profile.projectExperience && (
+                    <div className="space-y-2 pt-3 mt-3 border-t border-zinc-800/80">
+                      <div className="flex items-center gap-1.5 pb-1 px-0.5 border-b border-zinc-800/60">
+                        <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                        <span className="text-xs font-bold text-white uppercase tracking-wider">
+                          Added via Reels AI
+                        </span>
+                      </div>
+                      <div className="box-inset-3d p-2.5 text-xs text-zinc-200 leading-relaxed">
+                        {profile.projectExperience}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -925,24 +1002,16 @@ export const ProfileView = ({
             savedJobs.map((job) => (
               <div
                 key={job.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3.5 flex items-center justify-between gap-3 shadow-sm hover:border-purple-500/30 transition"
+                className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3.5 flex items-center gap-3 shadow-sm hover:border-purple-500/30 transition"
               >
-                <div>
-                  <h4 className="font-bold text-xs text-white">{job.title}</h4>
-                  <p className="text-xs text-zinc-400">{job.company} • {job.location}</p>
+                <div className="w-9 h-9 rounded-xl bg-purple-900/40 border border-purple-700/50 text-purple-300 flex items-center justify-center shrink-0">
+                  <Bookmark className="w-4 h-4 fill-purple-400" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="font-bold text-xs text-white truncate">{job.title}</h4>
+                  <p className="text-xs text-zinc-400 truncate">{job.company} • {job.location}</p>
                   <p className="text-xs font-bold text-purple-400 mt-0.5">{job.salary}</p>
                 </div>
-                <button
-                  onClick={() => onApplyJob(job)}
-                  disabled={appliedJobIds.includes(job.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 cursor-pointer active:scale-95 transition ${
-                    appliedJobIds.includes(job.id)
-                      ? "bg-zinc-800 text-zinc-400 border border-zinc-700"
-                      : "btn-purple"
-                  }`}
-                >
-                  {appliedJobIds.includes(job.id) ? "Applied ✓" : "Apply Now"}
-                </button>
               </div>
             ))
           )}

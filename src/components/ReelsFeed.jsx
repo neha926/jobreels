@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Heart, MessageCircle, Share2, Bookmark, AlertTriangle, 
-  Volume2, VolumeX, Briefcase, MapPin, CheckCircle, ChevronUp, ChevronDown, Send, Play, Pause, Compass
+  Volume2, VolumeX, Briefcase, MapPin, CheckCircle, ChevronUp, ChevronDown, Send, Play, Pause, Compass, Plus
 } from 'lucide-react';
 
 export const ReelsFeed = ({ 
@@ -9,6 +9,7 @@ export const ReelsFeed = ({
   onApplyJob, 
   appliedJobIds = [], 
   onReport, 
+  onOpenPost,
   t 
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -38,6 +39,14 @@ export const ReelsFeed = ({
   const isLiked = !!likedReels[activeReel?.id];
   const isSaved = !!savedReels[activeReel?.id];
   const hasApplied = activeReel?.jobDetails && appliedJobIds.includes(activeReel.jobDetails.id);
+
+  // When a new reel is prepended (first reel id changes), jump to it so the
+  // user immediately sees their freshly uploaded reel.
+  useEffect(() => {
+    if (reels.length && currentIndex !== 0) {
+      setCurrentIndex(0);
+    }
+  }, [reels[0]?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Play active video on reel index change
   useEffect(() => {
@@ -250,8 +259,24 @@ export const ReelsFeed = ({
         </div>
       )}
 
-      {/* Right Side Compact Action Bar (Like, Comment, Save, Share, Report) */}
+      {/* Right Side Compact Action Bar (Post Reel, Like, Comment, Save, Share, Report) */}
       <div className="absolute right-2.5 bottom-24 z-20 flex flex-col items-center gap-2.5" onClick={(e) => e.stopPropagation()}>
+        {/* Post Reel (Plus icon on top of Like) */}
+        {onOpenPost && (
+          <button
+            onClick={onOpenPost}
+            className="flex flex-col items-center group active:scale-90 transition-transform cursor-pointer"
+            title="Post a reel"
+          >
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 text-white flex items-center justify-center border border-white/20 shadow-md shadow-purple-600/50 hover:scale-105 transition-all">
+              <Plus className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] font-semibold text-purple-100 drop-shadow mt-0.5">
+              Post
+            </span>
+          </button>
+        )}
+
         {/* Like */}
         <button
           onClick={toggleLike}
@@ -395,7 +420,7 @@ export const ReelsFeed = ({
 
         {/* IN-FEED JOB CARD & ONE-TAP APPLY BUTTON */}
         {activeReel.jobDetails && (
-          <div className="bg-zinc-950/90 border border-purple-500/40 rounded-2xl p-3 backdrop-blur-md shadow-2xl">
+          <div className="box-inset-3d rounded-2xl p-3 backdrop-blur-md shadow-2xl">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <h3 className="text-xs font-bold text-white leading-tight truncate">
@@ -487,6 +512,7 @@ export const ReelsFeed = ({
           </form>
         </div>
       )}
+
     </div>
   );
 };

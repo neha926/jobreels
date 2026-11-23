@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Search, MapPin, CheckCircle, Briefcase, 
   Bookmark, Share2, Filter, AlertTriangle, X, SlidersHorizontal, Sparkles
@@ -11,23 +11,46 @@ export const SearchJobs = ({
   savedJobIds = [], 
   onToggleSaveJob, 
   onReport,
+  initialSearchQuery = "",
   t 
 }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedJobType, setSelectedJobType] = useState("all");
   const [selectedExperience, setSelectedExperience] = useState("all");
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
 
+  useEffect(() => {
+    setSearchQuery(initialSearchQuery);
+  }, [initialSearchQuery]);
+
   const categories = [
     { id: "all", label: "All Industries" },
     { id: "Tech & Software", label: "💻 Tech & Software" },
     { id: "Sales & Marketing", label: "📈 Sales & Marketing" },
     { id: "Delivery & Logistics", label: "🚚 Delivery & Logistics" },
-    { id: "Customer Support & BPO", label: "🎧 Customer Support" },
+    { id: "Customer Support & BPO", label: "🎧 Customer Support & BPO" },
     { id: "Accounts & Finance", label: "📊 Accounts & Finance" },
-    { id: "Design & Creative", label: "🎨 Design & Media" }
+    { id: "Design & Creative", label: "🎨 Design & Creative" },
+    { id: "Real Estate & Construction", label: "🏗️ Real Estate & Construction" },
+    { id: "Manufacturing & Production", label: "🏭 Manufacturing & Production" },
+    { id: "Healthcare & Medical", label: "🏥 Healthcare & Medical" },
+    { id: "Education & Training", label: "📚 Education & Training" },
+    { id: "Hospitality & Hotel", label: "🏨 Hospitality & Hotel" },
+    { id: "Retail & Store", label: "🛍️ Retail & Store" },
+    { id: "Automobile & Driving", label: "🚗 Automobile & Driving" },
+    { id: "Banking & Insurance", label: "🏦 Banking & Insurance" },
+    { id: "Data & Analytics", label: "📈 Data & Analytics" },
+    { id: "Content & Writing", label: "✍️ Content & Writing" },
+    { id: "Telecom & Networking", label: "📡 Telecom & Networking" },
+    { id: "Electrical & Electronics", label: "⚡ Electrical & Electronics" },
+    { id: "Agriculture & Farming", label: "🌾 Agriculture & Farming" },
+    { id: "Security & Housekeeping", label: "🛡️ Security & Housekeeping" },
+    { id: "HR & Recruitment", label: "👥 HR & Recruitment" },
+    { id: "Law & Legal", label: "⚖️ Law & Legal" },
+    { id: "Oil, Gas & Energy", label: "🛢️ Oil, Gas & Energy" },
+    { id: "Government & Public Sector", label: "🏛️ Government & Public Sector" }
   ];
 
   const jobTypes = [
@@ -188,7 +211,7 @@ export const SearchJobs = ({
               <div
                 key={job.id}
                 onClick={() => setSelectedJob(job)}
-                className="bg-zinc-900 border border-zinc-800 hover:border-purple-500/40 rounded-2xl p-4 shadow-sm transition-all duration-150 active:scale-[0.99] active:shadow-md active:shadow-purple-500/20 cursor-pointer relative"
+                className="box-inset-3d rounded-2xl p-4 transition-all duration-150 active:scale-[0.99] active:shadow-md active:shadow-purple-500/20 cursor-pointer relative"
               >
                 {/* Header: Title, Company, Category Tag */}
                 <div className="flex items-start justify-between gap-2 mb-2">

@@ -92,7 +92,7 @@ export const EmployerPanel = ({
         {applications.map((app) => (
           <div
             key={app.id}
-            className="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 shadow-lg"
+            className="box-inset-3d rounded-2xl p-4 shadow-lg"
           >
             <div className="flex items-start gap-3 mb-3">
               <img

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Send, MapPin, Calendar, Clock, User, Phone, CheckCircle, 
   ExternalLink, Sparkles, Paperclip, ChevronLeft, MessageSquare, Search
@@ -157,6 +157,44 @@ export const ChatView = ({
   const [seekerChats, setSeekerChats] = useState(initialSeekerChats);
   const [inputText, setInputText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  // Employer inbox filter: 'all' or 'interview'
+  const [inboxFilter, setInboxFilter] = useState('all');
+  const fileInputRef = useRef(null);
+
+  // Attach an image/file to the chat
+  const handleAttach = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const isImage = file.type.startsWith('image/');
+      const newMsg = {
+        id: `msg-${Date.now()}`,
+        sender: isEmployer ? 'employer' : 'candidate',
+        senderName: isEmployer ? (userProfile?.companyName || 'Hiring Team') : (userProfile?.name || 'Neha Pawar'),
+        text: file.name,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        type: isImage ? 'image' : 'file',
+        attachment: reader.result,
+        fileName: file.name
+      };
+
+      if (isEmployer && selectedSeekerId) {
+        setSeekerChats((prev) => ({
+          ...prev,
+          [selectedSeekerId]: {
+            ...prev[selectedSeekerId],
+            messages: [...prev[selectedSeekerId].messages, newMsg]
+          }
+        }));
+      } else {
+        onSendMessage(file.name);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
 
   const activeSeeker = selectedSeekerId ? seekerChats[selectedSeekerId] : null;
   const activeMessages = isEmployer ? (activeSeeker ? activeSeeker.messages : []) : messages;
@@ -214,10 +252,16 @@ export const ChatView = ({
 
   // EMPLOYER VIEW: STEP 1 - VERTICAL LIST OF JOB SEEKERS
   if (isEmployer && !selectedSeekerId) {
-    const filteredSeekers = Object.values(seekerChats).filter(s => 
+    const hasInterview = (s) => s.messages.some((m) => m.type === 'interview_card');
+    let list = Object.values(seekerChats);
+    if (inboxFilter === 'interview') {
+      list = list.filter(hasInterview);
+    }
+    const filteredSeekers = list.filter(s =>
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.jobTitle.toLowerCase().includes(searchQuery.toLowerCase())
     );
+    const interviewCount = Object.values(seekerChats).filter(hasInterview).length;
 
     return (
       <div className="flex flex-col h-[calc(100vh-120px)] max-h-[820px] max-w-md mx-auto bg-zinc-950 border-x border-zinc-800">
@@ -225,16 +269,43 @@ export const ChatView = ({
         <div className="bg-zinc-900 p-3.5 border-b border-zinc-800 flex items-center justify-between">
           <div>
             <div className="flex items-center gap-1.5">
-              <h2 className="font-semibold text-sm text-white">Job Seeker Messages</h2>
+              <h2 className="font-semibold text-sm text-white">HR Inbox</h2>
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
             </div>
             <p className="text-xs text-zinc-400 font-normal">
-              {Object.keys(seekerChats).length} Candidates Applied • Direct Chat
+              {Object.keys(seekerChats).length} Candidates • {interviewCount} Interview
             </p>
           </div>
           <span className="px-2 py-0.5 rounded-lg bg-purple-950/80 border border-purple-500/30 text-purple-300 text-[11px] font-medium">
-            HR Inbox
+            Employer
           </span>
+        </div>
+
+        {/* Inbox filter tabs: All / Interview */}
+        <div className="flex gap-1.5 p-2.5 bg-zinc-950 border-b border-zinc-800/80">
+          <button
+            type="button"
+            onClick={() => setInboxFilter('all')}
+            className={`flex-1 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              inboxFilter === 'all'
+                ? 'bg-purple-600 text-white shadow-md shadow-purple-900/40'
+                : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+            }`}
+          >
+            All Messages
+          </button>
+          <button
+            type="button"
+            onClick={() => setInboxFilter('interview')}
+            className={`flex-1 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              inboxFilter === 'interview'
+                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-900/40'
+                : 'bg-zinc-900 text-zinc-400 hover:text-white border border-zinc-800'
+            }`}
+          >
+            <Calendar className="w-3.5 h-3.5" />
+            Interview ({interviewCount})
+          </button>
         </div>
 
         {/* Search Bar */}
@@ -253,45 +324,63 @@ export const ChatView = ({
 
         {/* Vertical List of Job Seekers */}
         <div className="flex-1 overflow-y-auto divide-y divide-zinc-800/60 no-scrollbar">
-          {filteredSeekers.map((seeker) => {
-            const lastMsg = seeker.messages[seeker.messages.length - 1];
-            return (
-              <button
-                key={seeker.id}
-                type="button"
-                onClick={() => setSelectedSeekerId(seeker.id)}
-                className="w-full p-3.5 flex items-center gap-3 hover:bg-zinc-900/60 transition text-left cursor-pointer active:bg-zinc-850 group"
-              >
-                <div className="relative shrink-0">
-                  <img
-                    src={seeker.avatar}
-                    alt={seeker.name}
-                    className="w-12 h-12 rounded-2xl object-cover border border-purple-500/30 group-hover:border-purple-400 transition"
-                  />
-                  <span className="w-3 h-3 bg-emerald-400 rounded-full absolute bottom-0 right-0 border-2 border-zinc-950"></span>
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-1 mb-0.5">
-                    <h3 className="font-medium text-sm text-white truncate group-hover:text-purple-300 transition">
-                      {seeker.name}
-                    </h3>
-                    <span className="text-[11px] text-zinc-400 shrink-0 font-normal">
-                      {lastMsg?.time || 'Today'}
-                    </span>
+          {filteredSeekers.length === 0 ? (
+            <div className="text-center py-12 px-6">
+              <Calendar className="w-10 h-10 text-zinc-600 mx-auto mb-2" />
+              <p className="text-xs text-zinc-400 font-medium">
+                {inboxFilter === 'interview'
+                  ? 'No interview messages yet.'
+                  : 'No candidates match your search.'}
+              </p>
+            </div>
+          ) : (
+            filteredSeekers.map((seeker) => {
+              const lastMsg = seeker.messages[seeker.messages.length - 1];
+              const isInterview = hasInterview(seeker);
+              return (
+                <button
+                  key={seeker.id}
+                  type="button"
+                  onClick={() => setSelectedSeekerId(seeker.id)}
+                  className="w-full p-3.5 flex items-center gap-3 hover:bg-zinc-900/60 transition text-left cursor-pointer active:bg-zinc-850 group"
+                >
+                  <div className="relative shrink-0">
+                    <img
+                      src={seeker.avatar}
+                      alt={seeker.name}
+                      className="w-12 h-12 rounded-2xl object-cover border border-purple-500/30 group-hover:border-purple-400 transition"
+                    />
+                    <span className="w-3 h-3 bg-emerald-400 rounded-full absolute bottom-0 right-0 border-2 border-zinc-950"></span>
                   </div>
 
-                  <p className="text-xs text-purple-400 font-normal truncate mb-1">
-                    {seeker.jobTitle}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                      <h3 className="font-medium text-sm text-white truncate group-hover:text-purple-300 transition">
+                        {seeker.name}
+                      </h3>
+                      <span className="text-[11px] text-zinc-400 shrink-0 font-normal">
+                        {lastMsg?.time || 'Today'}
+                      </span>
+                    </div>
 
-                  <p className="text-xs text-zinc-400 truncate font-normal">
-                    {lastMsg?.text || 'No messages yet'}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+                    <p className="text-xs text-purple-400 font-normal truncate mb-1">
+                      {seeker.jobTitle}
+                    </p>
+
+                    <p className="text-xs text-zinc-400 truncate font-normal flex items-center gap-1.5">
+                      {isInterview && (
+                        <span className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-emerald-950/70 border border-emerald-700/40 text-emerald-300 text-[10px] font-semibold">
+                          <Calendar className="w-2.5 h-2.5" />
+                          Interview
+                        </span>
+                      )}
+                      <span className="truncate">{lastMsg?.text || 'No messages yet'}</span>
+                    </p>
+                  </div>
+                </button>
+              );
+            })
+          )}
         </div>
       </div>
     );
@@ -414,6 +503,69 @@ export const ChatView = ({
             );
           }
 
+          // Image attachment
+          if (msg.type === 'image' && msg.attachment) {
+            return (
+              <div
+                key={msg.id}
+                className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}
+              >
+                {!isMine && (
+                  <span className="text-[11px] font-medium text-purple-300 mb-0.5 px-1">
+                    {msg.senderName}
+                  </span>
+                )}
+                <a
+                  href={msg.attachment}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block max-w-[70%] rounded-2xl overflow-hidden border border-zinc-700 shadow-md"
+                >
+                  <img
+                    src={msg.attachment}
+                    alt={msg.fileName || 'attachment'}
+                    className="w-full h-auto max-h-64 object-cover"
+                  />
+                </a>
+                {msg.fileName && (
+                  <span className="text-[10px] text-zinc-500 mt-0.5 px-1 font-normal">
+                    {msg.fileName}
+                  </span>
+                )}
+                <span className="text-[10px] text-zinc-500 mt-0.5 px-1 font-normal">{msg.time}</span>
+              </div>
+            );
+          }
+
+          // File attachment (PDF / doc)
+          if (msg.type === 'file' && msg.attachment) {
+            return (
+              <div
+                key={msg.id}
+                className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}
+              >
+                {!isMine && (
+                  <span className="text-[11px] font-medium text-purple-300 mb-0.5 px-1">
+                    {msg.senderName}
+                  </span>
+                )}
+                <a
+                  href={msg.attachment}
+                  download={msg.fileName}
+                  className={`flex items-center gap-2 max-w-[75%] rounded-2xl px-3.5 py-2.5 text-xs shadow-sm font-medium ${
+                    isMine
+                      ? 'bg-purple-600 text-white rounded-br-none'
+                      : 'bg-zinc-900 text-zinc-200 border border-zinc-800 rounded-bl-none'
+                  }`}
+                >
+                  <Paperclip className="w-4 h-4 shrink-0" />
+                  <span className="truncate">{msg.fileName}</span>
+                </a>
+                <span className="text-[10px] text-zinc-500 mt-1 px-1 font-normal">{msg.time}</span>
+              </div>
+            );
+          }
+
           return (
             <div
               key={msg.id}
@@ -498,10 +650,18 @@ export const ChatView = ({
 
       {/* Chat Input Bar */}
       <form onSubmit={handleSend} className="p-3 bg-zinc-900 flex items-center gap-2 border-t border-zinc-800 mb-14">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*,application/pdf,.doc,.docx"
+          onChange={handleAttach}
+          className="hidden"
+        />
         <button
           type="button"
+          onClick={() => fileInputRef.current?.click()}
           className="p-2 text-zinc-400 hover:text-white rounded-xl bg-zinc-850 border border-zinc-800 active:scale-95 transition cursor-pointer"
-          title="Attach certificate or document"
+          title="Attach certificate, photo or document"
         >
           <Paperclip className="w-4 h-4" />
         </button>
