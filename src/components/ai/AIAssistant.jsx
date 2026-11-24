@@ -56,6 +56,72 @@ const STRINGS = {
 
 const speechLocale = { mr: 'mr-IN', hi: 'hi-IN', en: 'en-IN' };
 
+// Preferred voice locales per language, in order. Marathi falls back to Hindi
+// because browsers rarely ship a dedicated mr-IN voice; both share Devanagari.
+const voiceLocaleChain = {
+  mr: ['mr-IN', 'hi-IN'],
+  hi: ['hi-IN', 'mr-IN'],
+  en: ['en-IN', 'en-GB', 'en-US']
+};
+
+const isFemaleVoice = (name = '') =>
+  /(female|zira|heera|kalpana|swara|aarohi|neerja|priya|aditi|raveena|shruti|veena|lekha|samantha|victoria|tessa|karen|moira|fiona|susan|google)/i.test(name);
+const isMaleVoice = (name = '') =>
+  /(\bmale\b|manohar|\bravi\b|hemant|prabhat|\brishi\b|\bdavid\b|\bmark\b|daniel|\balex\b|\bfred\b|\bgeorge\b|\bjames\b|oliver|thomas)/i.test(name);
+
+// Pick the best available voice: prefer a female voice for our assistant,
+// walking the locale fallback chain so Marathi/Hindi/English always resolve.
+const pickVoice = (voices, language) => {
+  if (!voices || !voices.length) return null;
+  const chain = voiceLocaleChain[language] || voiceLocaleChain.mr;
+  const normalize = (lang) => String(lang || '').toLowerCase().replace('_', '-');
+  const candidates = [];
+  chain.forEach((tag) => {
+    voices.forEach((voice) => {
+      if (normalize(voice.lang).startsWith(tag.toLowerCase()) && !candidates.includes(voice)) {
+        candidates.push(voice);
+      }
+    });
+  });
+  if (!candidates.length) {
+    const base = chain[0].split('-')[0];
+    voices.forEach((voice) => {
+      if (normalize(voice.lang).startsWith(base)) candidates.push(voice);
+    });
+  }
+  return (
+    candidates.find((voice) => isFemaleVoice(voice.name) && !isMaleVoice(voice.name)) ||
+    candidates.find((voice) => !isMaleVoice(voice.name)) ||
+    candidates[0] ||
+    null
+  );
+};
+
+// Chrome populates speechSynthesis voices asynchronously; wait for them so the
+// first spoken reply is not stuck with the browser default voice.
+const loadVoices = () =>
+  new Promise((resolve) => {
+    const synthesis = window.speechSynthesis;
+    if (!synthesis) {
+      resolve([]);
+      return;
+    }
+    const current = synthesis.getVoices();
+    if (current.length) {
+      resolve(current);
+      return;
+    }
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      synthesis.removeEventListener?.('voiceschanged', finish);
+      resolve(synthesis.getVoices());
+    };
+    synthesis.addEventListener?.('voiceschanged', finish);
+    setTimeout(finish, 800);
+  });
+
 export const AIAssistant = ({
   isOpen,
   onClose,
@@ -69,6 +135,7 @@ export const AIAssistant = ({
   const recognitionRef = useRef(null);
   const resumeTimerRef = useRef(null);
   const chunkIndexRef = useRef(0);
+  const speakTokenRef = useRef(0);
 
   const ui = STRINGS[language] || STRINGS.mr;
   const speechUi = STRINGS[activeLanguage] || ui;
@@ -88,6 +155,7 @@ export const AIAssistant = ({
   };
 
   const minimize = () => {
+    speakTokenRef.current += 1;
     recognitionRef.current?.abort();
     stopResumeTimer();
     window.speechSynthesis?.cancel();
@@ -98,6 +166,7 @@ export const AIAssistant = ({
 
   useEffect(() => {
     if (isOpen) return undefined;
+    speakTokenRef.current += 1;
     recognitionRef.current?.abort();
     stopResumeTimer();
     window.speechSynthesis?.cancel();
@@ -107,6 +176,7 @@ export const AIAssistant = ({
   }, [isOpen]);
 
   useEffect(() => () => {
+    speakTokenRef.current += 1;
     recognitionRef.current?.abort();
     stopResumeTimer();
     window.speechSynthesis?.cancel();
@@ -131,12 +201,15 @@ export const AIAssistant = ({
     return chunks.length ? chunks : [cleaned];
   };
 
-  const speak = (text, voiceLanguage) => {
+  const speak = async (text, voiceLanguage) => {
     const synthesis = window.speechSynthesis;
     if (!synthesis || typeof window.SpeechSynthesisUtterance === 'undefined') {
       setState('idle');
       return;
     }
+
+    const token = speakTokenRef.current + 1;
+    speakTokenRef.current = token;
 
     stopResumeTimer();
     synthesis.cancel();
@@ -146,7 +219,14 @@ export const AIAssistant = ({
     chunkIndexRef.current = 0;
     const locale = speechLocale[voiceLanguage] || speechLocale.mr;
 
+    // Wait for the browser to expose its voice list, then pick a female voice
+    // for the detected language (Marathi falls back to Hindi).
+    const voices = await loadVoices();
+    if (token !== speakTokenRef.current) return;
+    const voice = pickVoice(voices, voiceLanguage);
+
     const speakNextChunk = () => {
+      if (token !== speakTokenRef.current) return;
       if (chunkIndexRef.current >= chunks.length) {
         stopResumeTimer();
         setState('idle');
@@ -156,11 +236,7 @@ export const AIAssistant = ({
       const utterance = new window.SpeechSynthesisUtterance(chunk);
       utterance.lang = locale;
       utterance.rate = 1.02;
-      utterance.pitch = 1.08;
-
-      const voices = synthesis.getVoices();
-      const voice = voices.find((item) => item.lang.toLowerCase().startsWith(voiceLanguage))
-        || voices.find((item) => item.lang.toLowerCase().startsWith(locale.split('-')[0]));
+      utterance.pitch = 1.12;
       if (voice) utterance.voice = voice;
 
       utterance.onstart = () => setState('speaking');
@@ -203,37 +279,53 @@ export const AIAssistant = ({
     }
 
     window.speechSynthesis?.cancel();
-    const recognition = new SpeechRecognition();
-    recognition.lang = speechLocale[language] || speechLocale.mr;
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognition.onstart = () => setState('listening');
-    recognition.onresult = (event) => {
-      const question = event.results?.[0]?.[0]?.transcript?.trim();
-      if (question) answerQuestion(question);
-      else setState('idle');
-    };
-    recognition.onerror = (event) => {
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        setState('denied');
-      } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
+    const baseLocale = speechLocale[language] || speechLocale.mr;
+    // Marathi recognition is rarely supported; retry with Hindi, which still
+    // transcribes Marathi speech into Devanagari.
+    const locales = baseLocale.toLowerCase().startsWith('mr') ? [baseLocale, 'hi-IN'] : [baseLocale];
+
+    const attempt = (index) => {
+      const recognition = new SpeechRecognition();
+      recognition.lang = locales[index];
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      recognition.onstart = () => setState('listening');
+      recognition.onresult = (event) => {
+        const question = event.results?.[0]?.[0]?.transcript?.trim();
+        if (question) answerQuestion(question);
+        else setState('idle');
+      };
+      recognition.onerror = (event) => {
+        if (event.error === 'not-allowed') {
+          setState('denied');
+          return;
+        }
+        if (event.error === 'language-not-supported' && index < locales.length - 1) {
+          attempt(index + 1);
+          return;
+        }
+        if (event.error !== 'aborted' && event.error !== 'no-speech') {
+          setState('unsupported');
+        } else {
+          setState('idle');
+        }
+      };
+      recognition.onend = () => {
+        if (recognitionRef.current !== recognition) return;
+        recognitionRef.current = null;
+        setState((current) => current === 'listening' ? 'idle' : current);
+      };
+      recognitionRef.current = recognition;
+      try {
+        recognition.start();
+      } catch {
+        recognitionRef.current = null;
         setState('unsupported');
-      } else {
-        setState('idle');
       }
     };
-    recognition.onend = () => {
-      recognitionRef.current = null;
-      setState((current) => current === 'listening' ? 'idle' : current);
-    };
-    recognitionRef.current = recognition;
-    try {
-      recognition.start();
-    } catch {
-      recognitionRef.current = null;
-      setState('unsupported');
-    }
+
+    attempt(0);
   };
 
   const statusText = {
