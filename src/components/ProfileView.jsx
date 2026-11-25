@@ -21,9 +21,18 @@ export const ProfileView = ({
   setLanguage,
   t 
 }) => {
-  const [activeTab, setActiveTab] = useState("resume"); // "resume", "applications", "saved"
+  // Vertical accordion sections (resume, applications, saved) — each can expand/collapse
+  const [openSections, setOpenSections] = useState({
+    resume: true,
+    applications: false,
+    saved: false
+  });
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const toggleSection = (section) => {
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
 
   // Settings dropdown state
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -529,64 +538,51 @@ export const ProfileView = ({
         </div>
       )}
 
-      {/* 2. Profile Section Tabs */}
-      <div className="flex bg-zinc-900 p-1 rounded-2xl border border-zinc-800 mb-3.5">
+      {/* 2. Profile Sections — Vertical Accordion Buttons */}
+      {/* SECTION: DIGITAL RESUME */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl mb-3 overflow-hidden">
         <button
-          onClick={() => setActiveTab("resume")}
-          className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
-            activeTab === "resume"
-              ? "bg-purple-600 text-white shadow-md shadow-purple-900/40 active:shadow-lg active:shadow-purple-500/40"
-              : "text-zinc-400 hover:text-zinc-200"
-          }`}
+          onClick={() => toggleSection("resume")}
+          className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 transition cursor-pointer active:scale-[0.99]"
         >
-          <FileText className="w-3.5 h-3.5" />
-          Digital Resume
-        </button>
-        <button
-          onClick={() => setActiveTab("applications")}
-          className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
-            activeTab === "applications"
-              ? "bg-purple-600 text-white shadow-md shadow-purple-900/40 active:shadow-lg active:shadow-purple-500/40"
-              : "text-zinc-400 hover:text-zinc-200"
-          }`}
-        >
-          <Briefcase className="w-3.5 h-3.5" />
-          Applications ({applications.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("saved")}
-          className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
-            activeTab === "saved"
-              ? "bg-purple-600 text-white shadow-md shadow-purple-900/40 active:shadow-lg active:shadow-purple-500/40"
-              : "text-zinc-400 hover:text-zinc-200"
-          }`}
-        >
-          <Bookmark className="w-3.5 h-3.5" />
-          Saved Jobs ({savedJobs.length})
-        </button>
-      </div>
-
-      {/* TAB 1: AUTOMATIC DIGITAL RESUME */}
-      {activeTab === "resume" && (
-        <div className="space-y-3">
-          {/* Action Buttons: download resume + share */}
-          <div className="flex gap-2">
-            <button
-              onClick={handleDownloadPDF}
-              className="flex-1 btn-purple text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer"
-              title={t.downloadPDF || "Download PDF Resume"}
-            >
-              <Download className="w-4 h-4" />
-              <span>{t.downloadPDF || "Download Resume"}</span>
-            </button>
-            <button
-              onClick={handleShareResumeWhatsApp}
-              className="bg-zinc-850 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/80 font-semibold text-xs py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 active:scale-95 active:shadow-md active:shadow-purple-500/20 transition-all cursor-pointer"
-              title={t.shareWhatsApp || "Share on WhatsApp"}
-            >
-              <Share2 className="w-4 h-4 text-emerald-400" />
-            </button>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-purple-900/40 text-purple-300 border border-purple-700/50 flex items-center justify-center shrink-0">
+              <FileText className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider leading-none">
+                Digital Resume
+              </h3>
+              <span className="text-[11px] text-zinc-400 font-medium">
+                {profile.skills?.length || 5} verified skills
+              </span>
+            </div>
           </div>
+          <ChevronDown className={`w-4 h-4 text-zinc-400 transition-transform duration-200 ${
+            openSections.resume ? "rotate-180 text-purple-400" : ""
+          }`} />
+        </button>
+
+        {openSections.resume && (
+          <div className="p-3.5 pt-1 border-t border-zinc-800/80 bg-zinc-950/40 animate-in fade-in duration-150 space-y-3">
+            {/* Action Buttons: download resume + share */}
+            <div className="flex gap-2">
+              <button
+                onClick={handleDownloadPDF}
+                className="flex-1 btn-purple text-xs font-semibold py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer"
+                title={t.downloadPDF || "Download PDF Resume"}
+              >
+                <Download className="w-4 h-4" />
+                <span>{t.downloadPDF || "Download Resume"}</span>
+              </button>
+              <button
+                onClick={handleShareResumeWhatsApp}
+                className="bg-zinc-850 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/80 font-semibold text-xs py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 active:scale-95 active:shadow-md active:shadow-purple-500/20 transition-all cursor-pointer"
+                title={t.shareWhatsApp || "Share on WhatsApp"}
+              >
+                <Share2 className="w-4 h-4 text-emerald-400" />
+              </button>
+            </div>
 
           {/* Formatted Digital Resume Card */}
           <div className="bg-zinc-900 text-zinc-100 rounded-2xl p-4.5 shadow-sm border border-zinc-800 relative">
@@ -939,12 +935,36 @@ export const ProfileView = ({
               <span className="font-semibold text-purple-400 text-xs shrink-0">100% Free</span>
             </div>
           </div>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
-      {/* TAB 2: APPLICATION STATUS TRACKER */}
-      {activeTab === "applications" && (
-        <div className="space-y-3">
+      {/* SECTION: APPLICATIONS STATUS TRACKER */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl mb-3 overflow-hidden">
+        <button
+          onClick={() => toggleSection("applications")}
+          className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 transition cursor-pointer active:scale-[0.99]"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-purple-900/40 text-purple-300 border border-purple-700/50 flex items-center justify-center shrink-0">
+              <Briefcase className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider leading-none">
+                Applications
+              </h3>
+              <span className="text-[11px] text-zinc-400 font-medium">
+                {applications.length} application{applications.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-zinc-400 transition-transform duration-200 ${
+            openSections.applications ? "rotate-180 text-purple-400" : ""
+          }`} />
+        </button>
+
+        {openSections.applications && (
+          <div className="p-3.5 pt-1 border-t border-zinc-800/80 bg-zinc-950/40 animate-in fade-in duration-150 space-y-3">
           <p className="text-xs text-zinc-400">
             Real-time hiring status from HR (Applied ➔ Viewed ➔ Shortlisted ➔ Interview ➔ Selected):
           </p>
@@ -986,12 +1006,36 @@ export const ProfileView = ({
               )}
             </div>
           ))}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
-      {/* TAB 3: SAVED JOBS */}
-      {activeTab === "saved" && (
-        <div className="space-y-3">
+      {/* SECTION: SAVED JOBS */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl mb-3 overflow-hidden">
+        <button
+          onClick={() => toggleSection("saved")}
+          className="w-full flex items-center justify-between p-3.5 text-left hover:bg-zinc-950/40 transition cursor-pointer active:scale-[0.99]"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-purple-900/40 text-purple-300 border border-purple-700/50 flex items-center justify-center shrink-0">
+              <Bookmark className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider leading-none">
+                Saved Jobs
+              </h3>
+              <span className="text-[11px] text-zinc-400 font-medium">
+                {savedJobs.length} bookmarked
+              </span>
+            </div>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-zinc-400 transition-transform duration-200 ${
+            openSections.saved ? "rotate-180 text-purple-400" : ""
+          }`} />
+        </button>
+
+        {openSections.saved && (
+          <div className="p-3.5 pt-1 border-t border-zinc-800/80 bg-zinc-950/40 animate-in fade-in duration-150 space-y-3">
           {savedJobs.length === 0 ? (
             <div className="text-center py-10 bg-zinc-900/60 rounded-2xl border border-zinc-800">
               <Bookmark className="w-8 h-8 text-zinc-600 mx-auto mb-2" />
@@ -1015,8 +1059,9 @@ export const ProfileView = ({
               </div>
             ))
           )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
       {/* Footer Branding Note */}
       <div className="mt-6 pt-4 border-t border-zinc-800 text-center text-xs text-zinc-500">

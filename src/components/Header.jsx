@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Bell, Building2, User, Shield, LogIn, LogOut,
-  Calendar
+  Calendar, Sun, Moon
 } from 'lucide-react';
 
 export const Header = ({ 
@@ -13,7 +13,9 @@ export const Header = ({
   onLogout, 
   userProfile, 
   notifications = [], 
-  onNavigateProfile, 
+  onNavigateProfile,
+  theme = 'dark',
+  onToggleTheme,
   t 
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -44,6 +46,20 @@ export const Header = ({
 
         {/* Right Actions */}
         <div className="flex items-center gap-1.5">
+          {/* Theme Toggle (Dark / Light) */}
+          <button
+            onClick={onToggleTheme}
+            className="size-8 rounded-xl bg-zinc-900 hover:bg-zinc-850 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center relative transition-all active:scale-95 active:shadow-md active:shadow-purple-500/20 shadow-xs cursor-pointer"
+            title={theme === 'dark' ? 'Switch to Light theme' : 'Switch to Dark theme'}
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-300" />
+            ) : (
+              <Moon className="w-4 h-4 text-indigo-400" />
+            )}
+          </button>
+
           {/* 1. Notification Bell Icon */}
           <div className="relative">
             <button

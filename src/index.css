@@ -7,6 +7,87 @@
   box-sizing: border-box;
 }
 
+/* =========================================================
+   THEME TOGGLE (Dark / Light)
+   Default app is dark. When <html data-theme="light">, the
+   rules below override the dark Tailwind utility colors used
+   across the app so the same components render in a light
+   palette without rewriting every class.
+   ========================================================= */
+:root {
+  --app-bg: #09090b;
+  --app-surface: #18181b;
+  --app-surface-2: #27272a;
+  --app-text: #fafafa;
+  --app-text-muted: #a1a1aa;
+  --app-border: #27272a;
+}
+
+html[data-theme="light"] {
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-2: #f1f5f9;
+  --app-text: #0f172a;
+  --app-text-muted: #475569;
+  --app-border: #e2e8f0;
+  color-scheme: light;
+}
+
+html[data-theme="light"] body {
+  background: var(--app-bg) !important;
+  color: var(--app-text) !important;
+}
+
+html[data-theme="light"] .min-h-screen.bg-zinc-950,
+html[data-theme="light"] .bg-zinc-950 {
+  background-color: var(--app-bg) !important;
+  color: var(--app-text) !important;
+}
+html[data-theme="light"] .bg-zinc-900 { background-color: var(--app-surface) !important; color: var(--app-text) !important; }
+html[data-theme="light"] .bg-zinc-850 { background-color: var(--app-surface-2) !important; color: var(--app-text) !important; }
+html[data-theme="light"] .bg-zinc-800 { background-color: var(--app-surface-2) !important; color: var(--app-text) !important; }
+html[data-theme="light"] .bg-zinc-950\/60,
+html[data-theme="light"] .bg-zinc-950\/70,
+html[data-theme="light"] .bg-zinc-950\/95 { background-color: var(--app-surface) !important; }
+html[data-theme="light"] .bg-zinc-900\/60,
+html[data-theme="light"] .bg-zinc-900\/70,
+html[data-theme="light"] .bg-zinc-900\/95 { background-color: var(--app-surface) !important; }
+
+html[data-theme="light"] .text-zinc-100,
+html[data-theme="light"] .text-white { color: var(--app-text) !important; }
+html[data-theme="light"] .text-zinc-200 { color: var(--app-text) !important; }
+html[data-theme="light"] .text-zinc-300 { color: var(--app-text) !important; }
+html[data-theme="light"] .text-zinc-400 { color: var(--app-text-muted) !important; }
+html[data-theme="light"] .text-zinc-500 { color: #64748b !important; }
+html[data-theme="light"] .text-zinc-600 { color: #94a3b8 !important; }
+
+html[data-theme="light"] .border-zinc-800 { border-color: var(--app-border) !important; }
+html[data-theme="light"] .border-zinc-700 { border-color: var(--app-border) !important; }
+html[data-theme="light"] .border-zinc-800\/80,
+html[data-theme="light"] .border-zinc-800\/60 { border-color: var(--app-border) !important; }
+
+html[data-theme="light"] .box-inset-3d {
+  background: var(--app-surface-2) !important;
+  border-color: var(--app-border) !important;
+  box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.06) !important;
+}
+html[data-theme="light"] .card-3d {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+html[data-theme="light"] .input-3d {
+  background: var(--app-surface) !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Keep strong brand/accent text readable in both themes */
+html[data-theme="light"] .text-purple-300,
+html[data-theme="light"] .text-violet-200 { color: #7c3aed !important; }
+html[data-theme="light"] .text-purple-400 { color: #7c3aed !important; }
+
+/* Keep white brand buttons white text in both themes */
+html[data-theme="light"] .btn-purple { color: #fff !important; }
+
 /* Hide scrollbars for reels and bottom nav */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

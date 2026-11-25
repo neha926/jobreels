@@ -25,6 +25,8 @@ import { RoleSelect } from './components/auth/RoleSelect';
 import { ProfileSetup } from './components/auth/ProfileSetup';
 import { AssistantChat } from './components/AssistantChat';
 import { AIAssistant } from './components/ai/AIAssistant';
+import { BoostButton } from './components/BoostButton';
+import { BoostPage } from './components/BoostPage';
 import { useClerk } from '@clerk/react';
 
 export const App = () => {
@@ -37,10 +39,75 @@ export const App = () => {
   const [language, setLanguageState] = useState(() => localStorage.getItem("jobreels_language") || "mr");
   const [toastMessage, setToastMessage] = useState(null);
 
+  // Theme (dark / light)
+  const [theme, setTheme] = useState(() => localStorage.getItem("jobreels_theme") || "dark");
+
+  // Boost & Coins
+  const BOOST_COST = 200;
+  const REFER_BONUS = 50;
+  const SIGNUP_BONUS = 25;
+  const [coins, setCoins] = useState(() => {
+    try { return parseInt(localStorage.getItem("jobreels_coins") || "0", 10) || 0; } catch { return 0; }
+  });
+  const [isBoosted, setIsBoosted] = useState(() => localStorage.getItem("jobreels_boosted") === "true");
+  const [boostedUntil, setBoostedUntil] = useState(() => localStorage.getItem("jobreels_boosted_until") || null);
+  const [referrals, setReferrals] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("jobreels_referrals") || "[]"); } catch { return []; }
+  });
+  const [isBoostOpen, setIsBoostOpen] = useState(false);
+
+  // Apply theme to <html> whenever it changes
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("jobreels_theme", theme);
+  }, [theme]);
+
+  // Persist coins / boost / referrals
+  useEffect(() => { localStorage.setItem("jobreels_coins", String(coins)); }, [coins]);
+  useEffect(() => { localStorage.setItem("jobreels_boosted", String(isBoosted)); }, [isBoosted]);
+  useEffect(() => { if (boostedUntil) localStorage.setItem("jobreels_boosted_until", boostedUntil); }, [boostedUntil]);
+  useEffect(() => { localStorage.setItem("jobreels_referrals", JSON.stringify(referrals)); }, [referrals]);
+
+  const toggleTheme = () => setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+
+  const handleBoostProfile = () => {
+    if (coins < BOOST_COST) {
+      showToast(`You need ${BOOST_COST - coins} more coins. Refer friends to earn!`);
+      return;
+    }
+    if (isBoosted) {
+      showToast("Your profile is already boosted.");
+      return;
+    }
+    setCoins((prev) => prev - BOOST_COST);
+    setIsBoosted(true);
+    const until = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    const untilStr = until.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    setBoostedUntil(untilStr);
+    showToast(`🚀 Profile boosted! You're on top for 30 days.`);
+  };
+
+  // Simulate a friend signing up via referral link — awards coins to both sides
+  const handleReferralShare = (platform) => {
+    const friendName = `Friend${referrals.length + 1}`;
+    setReferrals((prev) => [...prev, { id: `ref-${Date.now()}`, name: friendName, date: "Just now" }]);
+    setCoins((prev) => prev + REFER_BONUS);
+    showToast(`🎉 ${friendName} joined via your link! +${REFER_BONUS} coins (friend got +${SIGNUP_BONUS}).`);
+    if (platform === "whatsapp") {
+      const text = encodeURIComponent(
+        `Hey! Join JobReels and get ${SIGNUP_BONUS} free coins to boost your profile. Use my code: ${referralCode}`
+      );
+      window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
+    } else if (platform === "sms") {
+      window.open(`sms:?body=${encodeURIComponent(`Join JobReels! Use my code ${referralCode} for ${SIGNUP_BONUS} free coins.`)}`, "_blank");
+    }
+  };
+
   // Authentication & Onboarding State
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authStep, setAuthStep] = useState("phone"); // "phone" | "role" | "profile"
   const [authPhone, setAuthPhone] = useState("");
+  const referralCode = `JR${(authPhone || "USER").slice(-4).toUpperCase()}`;
   const [selectedRole, setSelectedRole] = useState("candidate");
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState(initialCandidateProfile);
@@ -552,6 +619,8 @@ export const App = () => {
           userProfile={userProfile}
           notifications={notifications}
           onNavigateProfile={() => navigate("/profile")}
+          theme={theme}
+          onToggleTheme={toggleTheme}
           t={t}
         />
 
@@ -729,6 +798,30 @@ export const App = () => {
             fraudReports: currentRole === "admin" ? fraudReports : []
           }}
           onNavigate={handleSwabheeNavigate}
+        />
+      )}
+
+      {/* Floating Boost Button — bottom-left, beside Swabiee (only when logged in) */}
+      {isLoggedIn && (
+        <BoostButton
+          coins={coins}
+          isBoosted={isBoosted}
+          onClick={() => setIsBoostOpen(true)}
+        />
+      )}
+
+      {/* Boost Page Modal (Refer & Earn Coins, 200-coin profile boost) */}
+      {isBoostOpen && (
+        <BoostPage
+          coins={coins}
+          isBoosted={isBoosted}
+          boostedUntil={boostedUntil}
+          referrals={referrals}
+          referralCode={referralCode}
+          onBoost={handleBoostProfile}
+          onShareReferral={handleReferralShare}
+          onClose={() => setIsBoostOpen(false)}
+          t={t}
         />
       )}
 
