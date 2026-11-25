@@ -10,7 +10,7 @@ export const BoostButton = ({isBoosted = false, onClick }) => {
     <button
       type="button"
       onClick={onClick}
-      className="fixed top-25 z-40 flex items-end gap-2 active:scale-95 transition-transform cursor-pointer animate-pulse-subtle"
+      className="fixed top-40 z-40 flex items-end gap-2 active:scale-95 transition-transform cursor-pointer animate-pulse-subtle"
       style={{ right: 'max(12px, calc((101vw - 448px) / 2 + 12px))' }}
       title={isBoosted ? 'Boost Active' : 'Boost profile & earn coins'}
       aria-label="Boost profile"
